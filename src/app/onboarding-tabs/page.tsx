@@ -496,7 +496,7 @@ if (name === "mobile" || name === "recoveryMobile") {
 // 3) Enforce child-level rule (sync; no DB)
 // Treat as child if we have a parent ref or explicit child flags
 const childFlowHC =
-  Boolean(referralCode) || next.type === "child" || next.isChild === true;
+  Boolean(referralCode);
 
 // Resolve parent level from state; fall back to referral string (e.g. INTAAD... -> AD)
 let parentLvlHC = (next.parent_level || next.parentLevel || "")
@@ -688,24 +688,14 @@ const handleSubmit = async () => {
 // Enforce correct child level before insert (isolated scope, no name clashes)
 // ────────────────────────────────────────────────
 {
-  const __childFlow =
-    Boolean(referralCode) || formData?.type === "child" || formData?.isChild === true;
+const __childFlow = Boolean(referralCode);
 
-    // Diagnostics for child-level enforcement (await-free)
-console.log("[child] gate", {
-  referralCode,
-  type: formData?.type,
-  isChild: formData?.isChild,
-  __childFlow,
-});
+console.log("[child] gate", { referralCode, __childFlow });
 
 // 1) Read parent level from state first
-let parentLevelRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "");
-console.log("[child] parent level (state)", {
-  parent_level: formData?.parent_level,
-  parentLevel: formData?.parentLevel,
-  parentLevelRaw,
-});
+let parentLevelRaw = "";
+console.log("[child] parent level (state)", { parentLevelRaw });
+
 
 // Utility to finish derivation + enforce
 const finish = () => {
@@ -743,9 +733,7 @@ if (!/^[A-Za-z]{2}$/.test(parentLevelRaw.toUpperCase()) && referralCode) {
 }
 
   // read from state; if missing, fetch by referral
-  let __parentLvl = (
-    formData?.parent_level || formData?.parentLevel || ""
-  ).toString().toUpperCase();
+ let __parentLvl = "";
 
 if (__childFlow && !/^[A-Z]{2}$/.test(__parentLvl)) {
   try {
@@ -779,7 +767,7 @@ const isChild = !!referralCode; // child flow whenever we have a parent ref
 
 // Try to get parent level (from state or DB)
 let parentLevelRaw = (
-  formData?.parent_level || formData?.parentLevel || ""
+  ""
 ).toString().toUpperCase();
 
 if (isChild && !/^[A-Z]{2}$/.test(parentLevelRaw)) {
@@ -882,10 +870,10 @@ const childBranch = isChild ? (expectedChildLevel?.toUpperCase() || null) : null
 // Final guard: normalize/force level for child flow (no async here)
 {
   const __childFlow =
-    Boolean(referralCode) || formData?.type === "child" || formData?.isChild === true;
+    Boolean(referralCode);
 
   if (__childFlow) {
-    const __parentLvlRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "").toUpperCase();
+    const __parentLvlRaw = "";
     const __base = /^[A-Z]{2}$/.test(__parentLvlRaw) ? __parentLvlRaw : "AA";
     const __derived = nextAlphaPair(__base); // e.g., AD -> AE
 

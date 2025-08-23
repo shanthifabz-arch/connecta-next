@@ -693,12 +693,9 @@ const __childFlow = Boolean(referralCode);
 console.log("[child] gate", { referralCode, __childFlow });
 
 // 1) Read parent level from state first
-let parentLevelRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "");
-console.log("[child] parent level (state)", {
-  parent_level: formData?.parent_level,
-  parentLevel: formData?.parentLevel,
-  parentLevelRaw,
-});
+let parentLevelRaw = "";
+console.log("[child] parent level (state)", { parentLevelRaw });
+
 
 // Utility to finish derivation + enforce
 const finish = () => {
@@ -736,9 +733,7 @@ if (!/^[A-Za-z]{2}$/.test(parentLevelRaw.toUpperCase()) && referralCode) {
 }
 
   // read from state; if missing, fetch by referral
-  let __parentLvl = (
-    formData?.parent_level || formData?.parentLevel || ""
-  ).toString().toUpperCase();
+ let __parentLvl = "";
 
 if (__childFlow && !/^[A-Z]{2}$/.test(__parentLvl)) {
   try {

@@ -496,7 +496,7 @@ if (name === "mobile" || name === "recoveryMobile") {
 // 3) Enforce child-level rule (sync; no DB)
 // Treat as child if we have a parent ref or explicit child flags
 const childFlowHC =
-  Boolean(referralCode) || next.type === "child" || next.isChild === true;
+  Boolean(referralCode);
 
 // Resolve parent level from state; fall back to referral string (e.g. INTAAD... -> AD)
 let parentLvlHC = (next.parent_level || next.parentLevel || "")
@@ -688,16 +688,9 @@ const handleSubmit = async () => {
 // Enforce correct child level before insert (isolated scope, no name clashes)
 // ────────────────────────────────────────────────
 {
-  const __childFlow =
-    Boolean(referralCode) || formData?.type === "child" || formData?.isChild === true;
+const __childFlow = Boolean(referralCode);
 
-    // Diagnostics for child-level enforcement (await-free)
-console.log("[child] gate", {
-  referralCode,
-  type: formData?.type,
-  isChild: formData?.isChild,
-  __childFlow,
-});
+console.log("[child] gate", { referralCode, __childFlow });
 
 // 1) Read parent level from state first
 let parentLevelRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "");
@@ -882,7 +875,7 @@ const childBranch = isChild ? (expectedChildLevel?.toUpperCase() || null) : null
 // Final guard: normalize/force level for child flow (no async here)
 {
   const __childFlow =
-    Boolean(referralCode) || formData?.type === "child" || formData?.isChild === true;
+    Boolean(referralCode);
 
   if (__childFlow) {
     const __parentLvlRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "").toUpperCase();

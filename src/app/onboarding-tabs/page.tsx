@@ -767,7 +767,7 @@ const isChild = !!referralCode; // child flow whenever we have a parent ref
 
 // Try to get parent level (from state or DB)
 let parentLevelRaw = (
-  formData?.parent_level || formData?.parentLevel || ""
+  ""
 ).toString().toUpperCase();
 
 if (isChild && !/^[A-Z]{2}$/.test(parentLevelRaw)) {
@@ -873,7 +873,7 @@ const childBranch = isChild ? (expectedChildLevel?.toUpperCase() || null) : null
     Boolean(referralCode);
 
   if (__childFlow) {
-    const __parentLvlRaw = String(formData?.parent_level ?? formData?.parentLevel ?? "").toUpperCase();
+    const __parentLvlRaw = "";
     const __base = /^[A-Z]{2}$/.test(__parentLvlRaw) ? __parentLvlRaw : "AA";
     const __derived = nextAlphaPair(__base); // e.g., AD -> AE
 

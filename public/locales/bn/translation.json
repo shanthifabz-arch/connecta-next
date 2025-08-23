@@ -1,0 +1,13 @@
+{
+  "welcome_to": "স্বাগতম",
+  "tagline": "আজই আপনার যাত্রা শুরু করুন",
+  "select_language": "ভাষা নির্বাচন করুন",
+  "paste_link_or_code": "রেফারেল লিঙ্ক বা কোড পেস্ট করুন",
+  "or": "অথবা",
+  "upload_qr": "QR কোড আপলোড করুন",
+  "scan_qr": "QR কোড স্ক্যান করুন",
+  "accept_terms": "আমি গ্রহণ করি",
+  "terms_and_conditions": "শর্তাবলী",
+  "join_community": "কমিউনিটিতে যোগ দিন",
+  "alert.enter_referral_and_accept_terms": "অনুগ্রহ করে রেফারেল কোড দিন এবং শর্তাবলী গ্রহণ করুন"
+}

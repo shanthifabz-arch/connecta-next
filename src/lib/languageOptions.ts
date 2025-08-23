@@ -1,0 +1,28 @@
+const languageOptions = [
+  { label: "English", code: "en" },
+  { label: "Hindi", code: "hi" },
+  { label: "Tamil", code: "ta" },
+  { label: "Telugu", code: "te" },
+  { label: "Malayalam", code: "ml" },
+  { label: "Kannada", code: "kn" },
+  { label: "Bengali", code: "bn" },
+  { label: "Marathi", code: "mr" },
+  { label: "Gujarati", code: "gu" },
+  { label: "Punjabi", code: "pa" },
+  { label: "Urdu", code: "ur" },
+  { label: "Mandarin Chinese", code: "zh" },
+  { label: "Spanish", code: "es" },
+  { label: "Arabic", code: "ar" },
+  { label: "French", code: "fr" },
+  { label: "Portuguese", code: "pt" },
+  { label: "Russian", code: "ru" },
+  { label: "Indonesian", code: "id" },
+  { label: "German", code: "de" },
+  { label: "Japanese", code: "ja" },
+  { label: "Nigerian Pidgin", code: "pcm" },
+  { label: "Egyptian Arabic", code: "arz" },
+  { label: "Malaysian", code: "ms" }
+];
+
+export default languageOptions;
+

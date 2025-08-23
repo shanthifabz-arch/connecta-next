@@ -1,0 +1,13 @@
+{
+  "welcome_to": "Bienvenue à",
+  "tagline": "Commencez votre voyage aujourd'hui",
+  "select_language": "Choisir la langue",
+  "paste_link_or_code": "Coller le lien ou le code de parrainage",
+  "or": "OU",
+  "upload_qr": "Télécharger le code QR",
+  "scan_qr": "Scanner le code QR",
+  "accept_terms": "J'accepte",
+  "terms_and_conditions": "Termes et conditions",
+  "join_community": "Rejoindre la communauté",
+  "alert.enter_referral_and_accept_terms": "Veuillez entrer le code de parrainage et accepter les conditions pour continuer"
+}

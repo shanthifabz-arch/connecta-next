@@ -1,0 +1,13 @@
+{
+  "welcome_to": "Bem-vindo ao",
+  "tagline": "Comece sua jornada hoje",
+  "select_language": "Selecionar idioma",
+  "paste_link_or_code": "Cole o link ou código de indicação",
+  "or": "OU",
+  "upload_qr": "Fazer upload do código QR",
+  "scan_qr": "Escanear código QR",
+  "accept_terms": "Eu aceito",
+  "terms_and_conditions": "Termos e condições",
+  "join_community": "Junte-se à comunidade",
+  "alert.enter_referral_and_accept_terms": "Insira o código de indicação e aceite os termos para continuar"
+}

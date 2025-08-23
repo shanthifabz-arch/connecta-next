@@ -1,0 +1,103 @@
+﻿Code,Label,Script
+af,Afrikaans,
+sq,Albanian,
+am,Amharic,
+ar,Arabic,Arabic
+hy-AM,Armenian,
+az-AZ,Azerbaijani,
+bn-BD,Bangla,
+eu-ES,Basque,
+be,Belarusian,
+bn,Bengali,Bengali
+bg,Bulgarian,
+my-MM,Burmese,
+ca,Catalan,
+zh-HK,Chinese (Hong Kong),
+zh-CN,Chinese (Simplified),
+zh-TW,Chinese (Traditional),
+hr,Croatian,
+cs-CZ,Czech,
+da-DK,Danish,
+nl-NL,Dutch,
+arz,Egyptian Arabic,Arabic
+en-IN,English,
+en,English,Latin
+en-ZA,English,
+en-SG,English,
+en-AU,English (Australia),
+en-CA,English (Canada),
+en-GB,English (United Kingdom),
+et,Estonian,
+fil,Filipino,
+fi-FI,Finnish,
+fr,French,Latin
+fr-CA,French (Canada),
+fr-FR,French (France),
+gl-ES,Galician,
+ka-GE,Georgian,
+de-DE,German,
+de,German,Latin
+el-GR,Greek,
+gu,Gujarati,Gujarati
+iw-IL,Hebrew,
+hi-IN,Hindi,
+hi,Hindi,Devanagari
+hu-HU,Hungarian,
+is-IS,Icelandic,
+id,Indonesian,Latin
+it-IT,Italian,
+ja-JP,Japanese,
+ja,Japanese,Kanji
+kn,Kannada,Kannada
+kn-IN,Kannada,
+kk,Kazakh,
+km-KH,Khmer,
+ko-KR,Korean,
+ky-KG,Kyrgyz,
+lo-LA,Lao,
+lv,Latvian,
+lt,Lithuanian,
+mk-MK,Macedonian,
+ms,Malay,Latin
+ms-MY,Malay (Malaysia),
+ml,Malayalam,Malayalam
+ml-IN,Malayalam,
+zh,Mandarin Chinese,Simplified Han
+mr-IN,Marathi,
+mr,Marathi,Devanagari
+mn-MN,Mongolian,
+ne-NP,Nepali,
+no-NO,Norwegian,
+fa-AE,Persian,
+fa-IR,Persian,
+fa-AF,Persian,
+fa,Persian,
+pl-PL,Polish,
+pt,Portuguese,Latin
+pt-BR,Portuguese (Brazil),
+pt-PT,Portuguese (Portugal),
+pa,Punjabi,Gurmukhi
+ro,Romanian,
+rm,Romansh,
+ru-RU,Russian,
+ru,Russian,Cyrillic
+sr,Serbian,
+si-LK,Sinhala,
+sk,Slovak,
+sl,Slovenian,
+es,Spanish,Latin
+es-419,Spanish (Latin America),
+es-ES,Spanish (Spain),
+es-US,Spanish (United States),
+sw,Swahili,
+sv-SE,Swedish,
+ta,Tamil,Tamil
+ta-IN,Tamil,
+te,Telugu,Telugu
+te-IN,Telugu,
+th,Thai,
+tr-TR,Turkish,
+uk,Ukrainian,
+ur,Urdu,Nastaliq
+vi,Vietnamese,
+zu,Zulu,

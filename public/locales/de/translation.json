@@ -1,0 +1,13 @@
+{
+  "welcome_to": "Willkommen bei",
+  "tagline": "Beginnen Sie noch heute Ihre Reise",
+  "select_language": "Sprache wählen",
+  "paste_link_or_code": "Fügen Sie den Empfehlungscode oder -link ein",
+  "or": "ODER",
+  "upload_qr": "QR-Code hochladen",
+  "scan_qr": "QR-Code scannen",
+  "accept_terms": "Ich akzeptiere",
+  "terms_and_conditions": "Allgemeine Geschäftsbedingungen",
+  "join_community": "Community beitreten",
+  "alert.enter_referral_and_accept_terms": "Bitte geben Sie den Empfehlungscode ein und akzeptieren Sie die Bedingungen, um fortzufahren"
+}

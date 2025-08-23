@@ -1,0 +1,13 @@
+{
+  "welcome_to": "ようこそ",
+  "tagline": "今日から旅を始めましょう",
+  "select_language": "言語を選択",
+  "paste_link_or_code": "紹介リンクまたはコードを貼り付け",
+  "or": "または",
+  "upload_qr": "QRコードをアップロード",
+  "scan_qr": "QRコードをスキャン",
+  "accept_terms": "同意します",
+  "terms_and_conditions": "利用規約",
+  "join_community": "コミュニティに参加する",
+  "alert.enter_referral_and_accept_terms": "続行するには紹介コードを入力して条件に同意してください"
+}

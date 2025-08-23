@@ -1,0 +1,17 @@
+{
+  "welcome": "WELCOME TO",
+  "tagline": "Capitalize your contacts. Earn through connections.",
+  "select_language": "Select Language",
+  "placeholder_referral": "Paste referral link or code",
+  "upload_qr": "Upload QR Code",
+  "choose_file": "Choose File",
+  "scan_qr": "Scan QR Code",
+  "accept_terms": "I accept the",
+  "terms": "Terms and Conditions",
+  "join_button": "Join CONNECTA Community",
+  "or": "or",
+  "alert_accept_terms": "Please accept the Terms and Conditions to proceed.",
+  "alert_enter_code": "Please enter or upload a referral code.",
+  "alert_qr_uploaded": "QR file uploaded (decoding logic coming soon)",
+  "scan_coming": "📸 QR scanning feature will be enabled soon"
+}

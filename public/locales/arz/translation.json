@@ -1,0 +1,13 @@
+{
+  "welcome_to": "اهلا بيك",
+  "tagline": "ابدأ رحلتك النهارده",
+  "select_language": "اختار اللغه",
+  "paste_link_or_code": "حط لينك الإحالة أو الكود",
+  "or": "او",
+  "upload_qr": "ارفع كود ال QR",
+  "scan_qr": "اسحب كود ال QR",
+  "accept_terms": "انا موافق",
+  "terms_and_conditions": "الشروط والاحكام",
+  "join_community": "انضم للمجتمع",
+  "alert.enter_referral_and_accept_terms": "من فضلك حط كود الإحالة ووافق على الشروط علشان تكمل"
+}

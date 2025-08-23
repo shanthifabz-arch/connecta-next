@@ -1,0 +1,13 @@
+{
+  "welcome_to": "स्वागत है",
+  "tagline": "आज ही अपनी यात्रा शुरू करें",
+  "select_language": "भाषा चुनें",
+  "paste_link_or_code": "रेफ़रल लिंक या कोड पेस्ट करें",
+  "or": "या",
+  "upload_qr": "QR कोड अपलोड करें",
+  "scan_qr": "QR कोड स्कैन करें",
+  "accept_terms": "मैं स्वीकार करता हूँ",
+  "terms_and_conditions": "नियम और शर्तें",
+  "join_community": "समुदाय में शामिल हों",
+  "alert.enter_referral_and_accept_terms": "कृपया आगे बढ़ने के लिए रेफरल कोड दर्ज करें और शर्तें स्वीकार करें"
+}

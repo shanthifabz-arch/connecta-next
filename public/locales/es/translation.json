@@ -1,0 +1,13 @@
+{
+  "welcome_to": "Bienvenido a",
+  "tagline": "Comienza tu viaje hoy",
+  "select_language": "Seleccionar idioma",
+  "paste_link_or_code": "Pegar enlace o código de referencia",
+  "or": "O",
+  "upload_qr": "Subir código QR",
+  "scan_qr": "Escanear código QR",
+  "accept_terms": "Acepto",
+  "terms_and_conditions": "Términos y condiciones",
+  "join_community": "Únete a la comunidad",
+  "alert.enter_referral_and_accept_terms": "Por favor, introduce el código de referencia y acepta los términos para continuar"
+}

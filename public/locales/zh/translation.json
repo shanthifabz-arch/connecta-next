@@ -1,0 +1,13 @@
+{
+  "welcome_to": "欢迎",
+  "tagline": "今天开始您的旅程",
+  "select_language": "选择语言",
+  "paste_link_or_code": "粘贴推荐链接或代码",
+  "or": "或",
+  "upload_qr": "上传二维码",
+  "scan_qr": "扫描二维码",
+  "accept_terms": "我接受",
+  "terms_and_conditions": "条款和条件",
+  "join_community": "加入社区",
+  "alert.enter_referral_and_accept_terms": "请输入推荐码并接受条款以继续"
+}

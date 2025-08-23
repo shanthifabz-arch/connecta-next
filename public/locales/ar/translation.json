@@ -1,0 +1,13 @@
+{
+  "welcome_to": "مرحبًا بك في",
+  "tagline": "ابدأ رحلتك اليوم",
+  "select_language": "اختر اللغة",
+  "paste_link_or_code": "الصق رابط الإحالة أو الرمز",
+  "or": "أو",
+  "upload_qr": "تحميل رمز الاستجابة السريعة",
+  "scan_qr": "مسح رمز الاستجابة السريعة",
+  "accept_terms": "أنا أوافق",
+  "terms_and_conditions": "الشروط والأحكام",
+  "join_community": "انضم إلى المجتمع",
+  "alert.enter_referral_and_accept_terms": "يرجى إدخال رمز الإحالة والموافقة على الشروط للمتابعة"
+}

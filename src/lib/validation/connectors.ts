@@ -16,7 +16,7 @@ export const addConnectorSchema = z.object({
     .transform((s) => (s ? s.toUpperCase() : s))
     .optional(),
   recovery_e164: e164,
-  extra: z.record(z.string(), z.unknown()).optional(),
+  extra: z.record(z.any()).optional(),
 }).refine((v) => v.mobile !== v.recovery_e164, {
   message: "Mobile number and recovery mobile number cannot be same",
   path: ["recovery_e164"],

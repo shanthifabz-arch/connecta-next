@@ -1,14 +1,19 @@
 ﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 // File: app/api/validate-referral-mobile/route.ts
 import { NextResponse } from "next/server";
-import { PostgrestError } from "@supabase/supabase-js";
-import { getSupabaseServer } from "@/lib/supabase-server";
-
+import { createClient, PostgrestError } from "@supabase/supabase-js";
 
 // Ensure Node runtime (supabase-js requires Node, not Edge)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/* ---------------------------- Supabase (server) ---------------------------- */
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Use any-typed alias to avoid deep TS generics inside this file
+const sb = supabase as any;
 
 /* --------------------------------- Config --------------------------------- */
 
@@ -78,8 +83,7 @@ const isAllStateToken = (s: string) => /^(all|allstates|all_states|\*)$/i.test((
 
 /* -------------- Robust parent referral finder (legacy parity) -------------- */
 
-async function findParentByReferral(referralCode: string, sb: any) {
-
+async function findParentByReferral(referralCode: string) {
   type Parent =
     | {
         id: string;
@@ -195,16 +199,6 @@ async function findParentByReferral(referralCode: string, sb: any) {
 
 export async function POST(req: Request) {
   try {
-        // Lazily create server client at request time; never at module load
-    let sb: any;
-    try {
-      sb = getSupabaseServer();
-    } catch {
-      return NextResponse.json(
-        { valid: false, error: "Server misconfigured: SUPABASE env missing", code: "SERVER_ERROR" },
-        { status: 500 }
-      );
-    }
     const body = (await req.json()) ?? {};
     let { referralCode, mobile, type, country, state } = body as {
       referralCode?: string;
@@ -318,8 +312,7 @@ export async function POST(req: Request) {
       }
 
       // child: parent referral exists?
-     const parentLookup = await findParentByReferral(referralCode, sb);
-
+      const parentLookup = await findParentByReferral(referralCode);
       if (parentLookup.error) {
         return NextResponse.json(
           {
@@ -450,7 +443,7 @@ export async function POST(req: Request) {
     /* ============================ child + mobile ============================ */
     if (type === "child") {
       // Parent referral exists?
-     const parentLookup = await findParentByReferral(referralCode, sb);
+      const parentLookup = await findParentByReferral(referralCode);
       if (parentLookup.error) {
         return NextResponse.json(
           {

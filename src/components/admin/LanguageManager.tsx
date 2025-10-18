@@ -155,10 +155,7 @@ export default function LanguageManager() {
         alert(" Failed to insert new languages.");
         console.error(insertError);
       } else {
-        const added = newEntries.length;
-const skipped = rows.length - added;
-window.alert(`${added} added, ${skipped} skipped.`);
-
+        alert( ${newEntries.length} added, ${rows.length - newEntries.length} skipped.`);
         fetchLanguages();
       }
     };

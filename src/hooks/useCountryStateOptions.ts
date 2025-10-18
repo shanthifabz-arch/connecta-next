@@ -2,11 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { safeSupa } from "@/lib/safeSupa";
+
+/** Public constant for UI dropdowns */
+export const ALL_STATES = "All States";
 
 /** ---------- Types ---------- */
 export interface CountryStateRow {
   country: string;
-  states?: string[] | string | null; // supports JSON array, CSV string, or mixed objects
+  // Accept any JSON shape from DB: string[], string, number, object, nested arrays, or null
+  states?: unknown;
   // Optional columns you may add later without breaking anything:
   // country_code?: string | null;
 }
@@ -18,44 +23,60 @@ const LS_KEY = "connecta_country_states_v2";
 const LS_TS_KEY = "connecta_country_states_v2_ts";
 const CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days (stale-while-revalidate)
 
-/** ---------- Helpers ---------- */
-function toArrayStates(input: CountryStateRow["states"]): string[] {
-  if (!input) return [];
+/** ---- helpers: make Supabase errors readable ---- */
+function sbErrMessage(err: any): string {
+  if (!err) return "Unknown Supabase error";
+  if (typeof err === "string") return err;
+  const m =
+    (err.message ?? err.msg ?? err.error_description ?? err.error) ||
+    (err.details ? String(err.details) : "") ||
+    (err.hint ? String(err.hint) : "");
+  return m || "Unknown Supabase error";
+}
+
+function sbErrSafeObject(err: any) {
+  try {
+    return JSON.parse(JSON.stringify(err ?? null)) ?? null;
+  } catch {
+    return { message: (err && err.message) || String(err) };
+  }
+}
+
+function toArrayStates(input: unknown): string[] {
+  if (input == null) return [];
 
   // 1) If it's already an array, normalize each entry
   if (Array.isArray(input)) {
-    const normalized = input
-      .flatMap((item) => {
-        if (typeof item === "string") return item;
-        if (typeof item === "number") return String(item);
-        if (Array.isArray(item)) return item.map((x) => String(x));
-        if (item && typeof item === "object") {
-          // Common shapes: { name: "Dhaka" }, { state: "Dhaka" }, { label: "Dhaka" }, etc.
-          const candidate =
-            (item as any).name ??
-            (item as any).state ??
-            (item as any).State ??
-            (item as any).district ??
-            (item as any).province ??
-            (item as any).region ??
-            (item as any).label ??
-            (item as any).value ??
-            null;
-          if (typeof candidate === "string") return candidate;
-        }
-        return null;
-      })
-      .filter((s): s is string => !!s);
-    return normalized;
+    const normalized = (input as unknown[]).flatMap((item: unknown): string[] => {
+      if (typeof item === "string") return [item];
+      if (typeof item === "number") return [String(item)];
+      if (Array.isArray(item)) return (item as unknown[]).map((x) => String(x));
+      if (item && typeof item === "object") {
+        // Common shapes: { name: "Dhaka" }, { state: "Dhaka" }, { label: "Dhaka" }, etc.
+        const candidate =
+          (item as any).name ??
+          (item as any).state ??
+          (item as any).State ??
+          (item as any).district ??
+          (item as any).province ??
+          (item as any).region ??
+          (item as any).label ??
+          (item as any).value ??
+          null;
+        return typeof candidate === "string" ? [candidate] : [];
+      }
+      return [];
+    });
+    return normalized.filter(Boolean);
   }
 
-  // 2) If it's a string, try JSON first (in case it's a JSON-encoded array)
+  // 2) If it's a string, try JSON first (in case it's a JSON-encoded array/object)
   if (typeof input === "string") {
     const str = input.trim();
     if (str.startsWith("[") || str.startsWith("{")) {
       try {
         const parsed = JSON.parse(str);
-        return toArrayStates(parsed as any);
+        return toArrayStates(parsed);
       } catch {
         // fall through to CSV parsing
       }
@@ -67,7 +88,22 @@ function toArrayStates(input: CountryStateRow["states"]): string[] {
       .filter(Boolean);
   }
 
-  // 3) Number or unexpected
+  // 3) Single object with a typical name field
+  if (typeof input === "object") {
+    const candidate =
+      (input as any).name ??
+      (input as any).state ??
+      (input as any).State ??
+      (input as any).district ??
+      (input as any).province ??
+      (input as any).region ??
+      (input as any).label ??
+      (input as any).value ??
+      null;
+    if (typeof candidate === "string") return [candidate];
+  }
+
+  // 4) Number or unexpected primitive
   if (typeof input === "number") return [String(input)];
 
   return [];
@@ -169,20 +205,20 @@ export function useCountryStateOptions() {
 
   const fetchFromSupabase = async () => {
     try {
-      const { data, error } = await supabase
-        .from<CountryStateRow>("country_states")
-        .select("country, states")
-        .order("country", { ascending: true });
+const { data, error } = await safeSupa<CountryStateRow[]>(async () =>
+  await supabase
+    .from("country_states")
+    .select("country, states")
+    .order("country", { ascending: true })
+);
 
-      // Some environments may return `error = {}`; treat as non-error unless it has a message
-      const isRealError = !!(error && (error as any).message);
+if (error) {
+  console.warn("[useCountryStateOptions] Supabase error:", { message: error });
+  setError(error || "Failed to load country/state data");
+  setLoading(false);
+  return;
+}
 
-      if (isRealError) {
-        console.error("[useCountryStateOptions] Supabase error:", error);
-        setError((error as any).message || "Failed to load country/state data");
-        setLoading(false);
-        return;
-      }
 
       const rows = Array.isArray(data) ? data : [];
       const normalized = normalizeRows(rows);

@@ -18,7 +18,7 @@ export default function TranslationViewer() {
       .from("translations")
       .select("language_code");
     if (error) {
-      setStatus("âŒ Error fetching language codes: " + error.message);
+      setStatus(" Error fetching language codes: " + error.message);
       return;
     }
     if (data) {
@@ -29,7 +29,7 @@ export default function TranslationViewer() {
 
   const handleFetch = async () => {
     if (!languageCode) {
-      setStatus("âŒ Please select a language code.");
+      setStatus(" Please select a language code.");
       return;
     }
 
@@ -40,18 +40,18 @@ export default function TranslationViewer() {
       .single();
 
     if (error || !data) {
-      setStatus("âŒ No translation found for this code.");
+      setStatus(" No translation found for this code.");
       setTranslations({});
     } else {
       setTranslations(data.translations || {});
-      setStatus("âœ… Translations loaded.");
+      setStatus(" Translations loaded.");
     }
   };
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-lg font-bold text-blue-700 mb-4">
-        ðŸ" View Translations from Supabase
+         View Translations from Supabase
       </h2>
 
       <div className="flex gap-2 mb-4">

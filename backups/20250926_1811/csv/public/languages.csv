@@ -1,0 +1,89 @@
+id,code,label,script,enabled,created_at,label_native,display_name,emoji_flag,country_code
+c952a848-e06d-4f71-99b5-d9f1ab35dcd6,ta,Tamil,Tamil,t,2025-07-07 15:40:07.058493+00,தமிழ்,🇮🇳 Tamil (தமிழ்),🇮🇳,IN
+24da24a8-3539-4bc0-a6bd-794ed3765029,hi,Hindi,Devanagari,t,2025-07-07 15:40:07.058493+00,हिन्दी,🇮🇳 Hindi (हिन्दी),🇮🇳,IN
+4e174f89-33fb-4cf5-b9ab-2a3dae872c31,ml,Malayalam,Malayalam,t,2025-07-07 15:40:07.058493+00,മലയാളം,🇮🇳 Malayalam (മലയാളം),🇮🇳,IN
+fa613c15-5b48-4567-a0f5-591cf1be1bc9,kn,Kannada,Kannada,t,2025-07-07 15:40:07.058493+00,ಕನ್ನಡ,🇮🇳 Kannada (ಕನ್ನಡ),🇮🇳,IN
+647bd933-ed6b-4d0b-b9c6-06047848f67a,bn,Bengali,Bengali,t,2025-07-07 15:40:07.058493+00,বাংলা,🇮🇳 Bengali (বাংলা),🇮🇳,IN
+ba1f9351-2fce-409f-96b5-db68eacfc451,mr,Marathi,Devanagari,t,2025-07-07 15:40:07.058493+00,मराठी,🇮🇳 Marathi (मराठी),🇮🇳,IN
+c1a11973-8769-46aa-82bd-cbf48e7fa0ae,gu,Gujarati,Gujarati,t,2025-07-07 15:40:07.058493+00,ગુજરાતી,🇮🇳 Gujarati (ગુજરાતી),🇮🇳,IN
+39c0fbed-9f3f-430d-9680-ecbfdbee2d58,pa,Punjabi,Gurmukhi,t,2025-07-07 15:40:07.058493+00,ਪੰਜਾਬੀ,🇮🇳 Punjabi (ਪੰਜਾਬੀ),🇮🇳,IN
+e576a83a-c010-4d50-a12f-0f836e51a4f1,be,Belarusian,"",t,2025-07-07 16:22:15.045511+00,Беларуская,🇧🇾 Belarusian (Беларуская),🇧🇾,UN
+f6472ef7-c56c-4bde-a8fb-350e79587a50,my-MM,Burmese,"",t,2025-07-07 16:22:15.045511+00,မြန်မာစာ,🇲🇲 Burmese (မြန်မာစာ),🇲🇲,UN
+25f8abaa-2a91-4c30-bd18-ffdf7498cc79,ca,Catalan,"",t,2025-07-07 16:22:15.045511+00,Català,🇪🇸 Catalan (Català),🇪🇸,UN
+5bf89ca0-3921-41dd-9570-2250c573161d,zh-HK,Chinese (Hong Kong),"",t,2025-07-07 16:22:15.045511+00,香港中文,🇭🇰 Chinese (Hong Kong) (香港中文),🇭🇰,UN
+ec9f0fc1-8e86-48f0-b04f-8458ef3cb95a,zh-CN,Chinese (Simplified),"",t,2025-07-07 16:22:15.045511+00,简体中文,🇨🇳 Chinese (Simplified) (简体中文),🇨🇳,UN
+c0f357a6-f5e8-445c-a754-de6a5da49fb3,zh-TW,Chinese (Traditional),"",t,2025-07-07 16:22:15.045511+00,繁體中文,🇹🇼 Chinese (Traditional) (繁體中文),🇹🇼,UN
+abbe08d7-252a-40a7-934a-29dd0d54531c,hr,Croatian,"",t,2025-07-07 16:22:15.045511+00,Hrvatski,🇭🇷 Croatian (Hrvatski),🇭🇷,UN
+5709251d-ca06-43a5-a428-54ba58f4a3a1,cs-CZ,Czech,"",t,2025-07-07 16:22:15.045511+00,Čeština,🇨🇿 Czech (Čeština),🇨🇿,UN
+f2ed93e5-7db8-4217-9ae6-6a98bfcb1a32,da-DK,Danish,"",t,2025-07-07 16:22:15.045511+00,Dansk,🇩🇰 Danish (Dansk),🇩🇰,UN
+f91d7195-9786-4faa-9a23-b1911f05501c,nl-NL,Dutch,"",t,2025-07-07 16:22:15.045511+00,Nederlands,🇳🇱 Dutch (Nederlands),🇳🇱,UN
+d4b8ee41-d988-4a1a-90c0-e66559f554a7,en-ZA,English,"",t,2025-07-07 16:22:15.045511+00,English,🇿🇦 English (English),🇿🇦,UN
+e43c31f8-06fe-4878-a064-8867673031ce,en-AU,English (Australia),"",t,2025-07-07 16:22:15.045511+00,English,🇦🇺 English (Australia) (English),🇦🇺,UN
+dcc1b0cb-a778-4f8f-a747-ceb87ebc1f04,en-CA,English (Canada),"",t,2025-07-07 16:22:15.045511+00,English,🇨🇦 English (Canada) (English),🇨🇦,UN
+c13b6eda-f060-4d19-97c1-614c887db41f,en-GB,English (United Kingdom),"",t,2025-07-07 16:22:15.045511+00,English,🇬🇧 English (United Kingdom) (English),🇬🇧,UN
+11de91da-9c25-4030-9120-e728957f59c1,et,Estonian,"",t,2025-07-07 16:22:15.045511+00,Eesti,🇪🇪 Estonian (Eesti),🇪🇪,UN
+6fca3ccd-1b80-4778-a069-7974edb2d89f,fil,Filipino,"",t,2025-07-07 16:22:15.045511+00,Filipino,🇵🇭 Filipino (Filipino),🇵🇭,UN
+d6c9919c-e9ae-4328-86f3-f3f4773c5d6b,fi-FI,Finnish,"",t,2025-07-07 16:22:15.045511+00,Suomi,🇫🇮 Finnish (Suomi),🇫🇮,UN
+7ba04383-9b15-4fbf-82df-6cc96de1c1e8,fr-CA,French (Canada),"",t,2025-07-07 16:22:15.045511+00,Français (Canada),🇨🇦 French (Canada) (Français (Canada)),🇨🇦,UN
+73e20571-7b7b-4039-90bc-acd83feb3f7d,fr-FR,French (France),"",t,2025-07-07 16:22:15.045511+00,Français (France),🇫🇷 French (France) (Français (France)),🇫🇷,UN
+01b5564b-e922-4fe2-afe7-4951420c447d,gl-ES,Galician,"",t,2025-07-07 16:22:15.045511+00,Galego,🇪🇸 Galician (Galego),🇪🇸,UN
+d0cabd7c-c0b1-4660-ad10-a20958e08cb4,ka-GE,Georgian,"",t,2025-07-07 16:22:15.045511+00,ქართული,🇬🇪 Georgian (ქართული),🇬🇪,UN
+24303d18-2ee7-4736-a25e-0dc2ac75b44e,el-GR,Greek,"",t,2025-07-07 16:22:15.045511+00,Ελληνικά,🇬🇷 Greek (Ελληνικά),🇬🇷,UN
+ea2e53b9-8281-495a-92f5-decc6443f2ae,iw-IL,Hebrew,"",t,2025-07-07 16:22:15.045511+00,עברית,🇮🇱 Hebrew (עברית),🇮🇱,UN
+402aef4f-ea85-4106-b45e-04fc79ce348b,hu-HU,Hungarian,"",t,2025-07-07 16:22:15.045511+00,Magyar,🇭🇺 Hungarian (Magyar),🇭🇺,UN
+f64286fd-4fb5-41cf-bebf-69267b1046c0,is-IS,Icelandic,"",t,2025-07-07 16:22:15.045511+00,Íslenska,🇮🇸 Icelandic (Íslenska),🇮🇸,UN
+377807c3-d20c-4e71-9937-95799ed94ea7,it-IT,Italian,"",t,2025-07-07 16:22:15.045511+00,Italiano,🇮🇹 Italian (Italiano),🇮🇹,UN
+cff6195c-1e32-4bdd-9287-27de139908bb,kk,Kazakh,"",t,2025-07-07 16:22:15.045511+00,Қазақ тілі,🇰🇿 Kazakh (Қазақ тілі),🇰🇿,UN
+b4f4955a-2234-42e9-aa12-35be68617191,km-KH,Khmer,"",t,2025-07-07 16:22:15.045511+00,ខ្មែរ,🇰🇭 Khmer (ខ្មែរ),🇰🇭,UN
+658e8aed-f3b0-4f05-a681-7242f94a5473,ko-KR,Korean,"",t,2025-07-07 16:22:15.045511+00,한국어,🇰🇷 Korean (한국어),🇰🇷,UN
+1cee72bf-efcc-4fa2-b1f4-8f50a5c00985,ky-KG,Kyrgyz,"",t,2025-07-07 16:22:15.045511+00,Кыргызча,🇰🇬 Kyrgyz (Кыргызча),🇰🇬,UN
+5726bb41-1efb-4d7e-a5ac-7a052e48dbf0,lo-LA,Lao,"",t,2025-07-07 16:22:15.045511+00,ລາວ,🇱🇦 Lao (ລາວ),🇱🇦,UN
+d4dd93aa-5292-457a-8202-9db291a14ce0,lv,Latvian,"",t,2025-07-07 16:22:15.045511+00,Latviešu,🇱🇻 Latvian (Latviešu),🇱🇻,UN
+5f1c3f72-0e2d-4db4-b5ae-173259aee1a4,lt,Lithuanian,"",t,2025-07-07 16:22:15.045511+00,Lietuvių,🇱🇹 Lithuanian (Lietuvių),🇱🇹,UN
+6a3e6d0d-0ef1-405f-9a52-2298653e0db1,mk-MK,Macedonian,"",t,2025-07-07 16:22:15.045511+00,Македонски,🇲🇰 Macedonian (Македонски),🇲🇰,UN
+9d108f5d-f5ce-469f-9b79-9963cf414ce5,ms-MY,Malay (Malaysia),"",t,2025-07-07 16:22:15.045511+00,Bahasa Malaysia,🇲🇾 Malay (Malaysia) (Bahasa Malaysia),🇲🇾,UN
+81d2fe24-b879-486b-9145-6080b4fc5bed,mr-IN,Marathi,"",t,2025-07-07 16:22:15.045511+00,मराठी,🇮🇳 Marathi (मराठी),🇮🇳,IN
+17f52a1c-7d47-4c8f-8a74-8de04013bcb8,mn-MN,Mongolian,"",t,2025-07-07 16:22:15.045511+00,Монгол хэл,🇲🇳 Mongolian (Монгол хэл),🇲🇳,UN
+a79f0c6f-9e54-4658-809f-50df17800904,ne-NP,Nepali,"",t,2025-07-07 16:22:15.045511+00,नेपाली,🇳🇵 Nepali (नेपाली),🇳🇵,UN
+d628a6a1-0c92-437e-a19c-371ca1e7db1c,no-NO,Norwegian,"",t,2025-07-07 16:22:15.045511+00,Norsk,🇳🇴 Norwegian (Norsk),🇳🇴,UN
+a2eeb1b5-0cbb-479e-99bc-dc14071060e1,fa-AE,Persian,"",t,2025-07-07 16:22:15.045511+00,فارسی,🇦🇪 Persian (فارسی),🇦🇪,UN
+7423d046-5880-4e92-b318-fb2dd5576d33,pl-PL,Polish,"",t,2025-07-07 16:22:15.045511+00,Polski,🇵🇱 Polish (Polski),🇵🇱,UN
+30b79cce-126c-494d-aaf5-033119615908,pt-BR,Portuguese (Brazil),"",t,2025-07-07 16:22:15.045511+00,Português (Brasil),🇧🇷 Portuguese (Brazil) (Português (Brasil)),🇧🇷,UN
+08418b86-8d54-49cb-bed4-f0d7ae38db0b,pt-PT,Portuguese (Portugal),"",t,2025-07-07 16:22:15.045511+00,Português (Portugal),🇵🇹 Portuguese (Portugal) (Português (Portugal)),🇵🇹,UN
+29c7b701-7346-4c3e-8c8a-f0cfa5d43941,ro,Romanian,"",t,2025-07-07 16:22:15.045511+00,Română,🇷🇴 Romanian (Română),🇷🇴,UN
+f12a4fed-b27d-486c-9cec-fe18bb510b1d,rm,Romansh,"",t,2025-07-07 16:22:15.045511+00,Rumantsch,🇨🇭 Romansh (Rumantsch),🇨🇭,UN
+9b4a8bba-33fc-4694-b7a6-c1c3569f6a44,ur,Urdu,Nastaliq,t,2025-07-07 15:40:07.058493+00,اردو,🇵🇰 Urdu (اردو),🇵🇰,IN
+038bff31-1cc7-47b6-a473-e756438f6d4a,ms,Malay,Latin,t,2025-07-07 15:40:07.058493+00,Bahasa Melayu,🇲🇾 Malay (Bahasa Melayu),🇲🇾,UN
+a2e4161b-88ac-47c7-8667-2e0ac0f2ea38,zh,Mandarin Chinese,Han,t,2025-07-07 16:11:14.865284+00,汉语,🇨🇳 Mandarin Chinese (汉语),🇨🇳,UN
+1898ca56-2c08-4d6f-855d-98f252e7fe1f,te,Telugu,Telugu,t,2025-07-07 16:11:14.865284+00,తెలుగు,🇮🇳 Telugu (తెలుగు),🇮🇳,IN
+8c3c576e-d4dd-46ec-b013-c15b57a0db35,az-AZ,Azerbaijani,"",t,2025-07-07 16:22:15.045511+00,Azərbaycan,🇦🇿 Azerbaijani (Azərbaycan),🇦🇿,UN
+40154c97-05a3-4ed4-9791-f2ee260496a6,bn-BD,Bangla,"",t,2025-07-07 16:22:15.045511+00,বাংলা,🇧🇩 Bangla (বাংলা),🇧🇩,UN
+58181a75-885f-4e89-b43f-29020e66dad8,eu-ES,Basque,"",t,2025-07-07 16:22:15.045511+00,Euskara,🇪🇸 Basque (Euskara),🇪🇸,UN
+eb9a3f1b-ac33-40ce-b948-00ddc31a464d,bg,Bulgarian,"",t,2025-07-07 16:22:15.045511+00,Български,🇧🇬 Bulgarian (Български),🇧🇬,UN
+f467b22b-ce9a-433e-bebd-0b7f1439ec8c,sr,Serbian,"",t,2025-07-07 16:22:15.045511+00,Српски,🇷🇸 Serbian (Српски),🇷🇸,UN
+72ef4813-4af5-46a1-ad8f-d59f3584aa56,si-LK,Sinhala,"",t,2025-07-07 16:22:15.045511+00,සිංහල,🇱🇰 Sinhala (සිංහල),🇱🇰,UN
+d037ac92-6565-4675-9441-06388034dd6b,sk,Slovak,"",t,2025-07-07 16:22:15.045511+00,Slovenčina,🇸🇰 Slovak (Slovenčina),🇸🇰,UN
+80813ffb-027c-40df-a050-0905b1293580,sl,Slovenian,"",t,2025-07-07 16:22:15.045511+00,Slovenščina,🇸🇮 Slovenian (Slovenščina),🇸🇮,UN
+69b1ef47-95d1-4b3d-93ad-2147879f2095,es-419,Spanish (Latin America),"",t,2025-07-07 16:22:15.045511+00,Español (Latinoamérica),🇲🇽 Spanish (Latin America) (Español (Latinoamérica)),🇲🇽,UN
+d5912933-4460-4dfd-9d49-50766a8944ac,es,Spanish,Latin,t,2025-07-07 15:40:07.058493+00,Español,🇪🇸 Spanish (Español),🇪🇸,UN
+d93e3a16-42ab-49f0-bda9-90475ec02ee2,ar,Arabic,Arabic,t,2025-07-07 15:40:07.058493+00,العربية,🇦🇪 Arabic (العربية),🇦🇪,UN
+3886a2a1-99a4-40d8-bb17-8f5a6532cfd8,fr,French,Latin,t,2025-07-07 15:40:07.058493+00,Français,🇫🇷 French (Français),🇫🇷,UN
+ee3d4a34-c477-4fbd-9360-ecfeb2b3f24b,pt,Portuguese,Latin,t,2025-07-07 15:40:07.058493+00,Português,🇵🇹 Portuguese (Português),🇵🇹,UN
+e6e43fee-199d-4100-9cbb-ac1a5928aec3,ru,Russian,Cyrillic,t,2025-07-07 15:40:07.058493+00,Русский,🇷🇺 Russian (Русский),🇷🇺,UN
+af99af75-b7bf-46b2-96f9-ab57971d9580,id,Indonesian,Latin,t,2025-07-07 15:40:07.058493+00,Bahasa Indonesia,🇮🇩 Indonesian (Bahasa Indonesia),🇮🇩,UN
+87edfa19-fe8c-48b2-be14-43544975a694,de,German,Latin,t,2025-07-07 15:40:07.058493+00,Deutsch,🇩🇪 German (Deutsch),🇩🇪,UN
+b7853a31-c4ae-4396-9e1f-3ec6eb5e5731,ja,Japanese,Kanji,t,2025-07-07 15:40:07.058493+00,日本語,🇯🇵 Japanese (日本語),🇯🇵,UN
+fe001129-86d0-4c7b-9f42-768b5a6d8f08,arz,Egyptian Arabic,Arabic,t,2025-07-07 15:40:07.058493+00,العربية المصرية,🇪🇬 Egyptian Arabic (العربية المصرية),🇪🇬,UN
+d92341cb-fb22-4cab-b7ec-5331d9a5d0be,es-ES,Spanish (Spain),"",t,2025-07-07 16:22:15.045511+00,Español (España),🇪🇸 Spanish (Spain) (Español (España)),🇪🇸,UN
+e5ee8de3-9c21-462c-a97b-2b0ea33f7247,es-US,Spanish (United States),"",t,2025-07-07 16:22:15.045511+00,Español (EE.UU.),🇺🇸 Spanish (United States) (Español (EE.UU.)),🇺🇸,UN
+7da83cd4-74a4-40e5-8fb8-90ac8fed6981,sw,Swahili,"",t,2025-07-07 16:22:15.045511+00,Kiswahili,🇰🇪 Swahili (Kiswahili),🇰🇪,UN
+2a5bb263-4f8d-4299-a55b-f214c77ad65b,sv-SE,Swedish,"",t,2025-07-07 16:22:15.045511+00,Svenska,🇸🇪 Swedish (Svenska),🇸🇪,UN
+ef67ecb2-a3d1-4174-8208-822a2dc6d310,th,Thai,"",t,2025-07-07 16:22:15.045511+00,ไทย,🇹🇭 Thai (ไทย),🇹🇭,UN
+63d702e7-cf1c-4977-940f-4c21da774568,tr-TR,Turkish,"",t,2025-07-07 16:22:15.045511+00,Türkçe,🇹🇷 Turkish (Türkçe),🇹🇷,UN
+4d4bb90c-aa50-49ff-923a-2a34accf3003,uk,Ukrainian,"",t,2025-07-07 16:22:15.045511+00,Українська,🇺🇦 Ukrainian (Українська),🇺🇦,UN
+ee9518ce-54dd-4b73-86fc-68803b4f9ca1,vi,Vietnamese,"",t,2025-07-07 16:22:15.045511+00,Tiếng Việt,🇻🇳 Vietnamese (Tiếng Việt),🇻🇳,UN
+b33635c0-d196-450e-a575-8570c706f893,zu,Zulu,"",t,2025-07-07 16:22:15.045511+00,isiZulu,🇿🇦 Zulu (isiZulu),🇿🇦,UN
+75841aef-433c-48c8-b76d-a85cbb5c32a9,sq,Albanian,"",t,2025-07-07 16:30:49.956079+00,Shqip,🇦🇱 Albanian (Shqip),🇦🇱,UN
+caf49d3a-8d6e-4953-8c7a-a80c14c98691,am,Amharic,"",t,2025-07-07 16:30:49.956079+00,አማርኛ,🇪🇹 Amharic (አማርኛ),🇪🇹,UN
+83a05d14-a696-41ed-9a60-23bd0867f1bc,hy-AM,Armenian,"",t,2025-07-07 16:30:49.956079+00,Հայերեն,🇦🇲 Armenian (Հայերեն),🇦🇲,UN
+147e3624-95c2-4c88-a1c1-0b07c6f3c01c,af,Afrikaans,Afrikaans,t,2025-07-14 09:09:24.015307+00,Afrikaans,🇿🇦 Afrikaans (Afrikaans),🇿🇦,UN

@@ -69,7 +69,7 @@ export default function ReadOnlyViewer() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-blue-700">ðŸ" Read-Only Viewer</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-700">Read-Only Viewer</h2>
 
       <input
         type="text"

@@ -1,0 +1,12 @@
+﻿{
+  "hosting": {
+    "site": "connecta-71322",
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
+      { "source": "/:page.html", "destination": "/:page", "type": 301 }
+    ]
+  }
+}

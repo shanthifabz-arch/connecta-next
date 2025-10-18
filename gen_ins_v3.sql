@@ -1,0 +1,40 @@
+                                                                                                   pg_get_functiondef                                                                                                    
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ CREATE OR REPLACE FUNCTION public.generate_and_insert_connector_v3(p_country text, p_state text, p_parent_ref text, p_mobile text, p_fullname text, p_email text, p_extra jsonb, p_recovery_e164 text, p_payload jsonb)+
+  RETURNS jsonb                                                                                                                                                                                                         +
+  LANGUAGE plpgsql                                                                                                                                                                                                      +
+  SET search_path TO 'public'                                                                                                                                                                                           +
+ AS $function$\r                                                                                                                                                                                                        +
+ declare\r                                                                                                                                                                                                              +
+   -- ... your existing DECLAREs ...\r                                                                                                                                                                                  +
+   v_profession text;        -- ✅ ensure we set a non-null\r                                                                                                                                                           +
+   v_short_name text;        -- (you already use this in the INSERT)\r                                                                                                                                                  +
+ begin\r                                                                                                                                                                                                                +
+   -- ... your existing pre-insert logic (parent lookup, serials, etc.) ...\r                                                                                                                                           +
+ \r                                                                                                                                                                                                                     +
+   -- ✅ NEW: robust defaults before INSERT\r                                                                                                                                                                           +
+   v_profession := coalesce(nullif(p_payload->>'profession',''), 'general');\r                                                                                                                                          +
+   v_short_name := coalesce(\r                                                                                                                                                                                          +
+                     nullif(p_payload->>'short_name',''),\r                                                                                                                                                             +
+                     -- fallback from name (trim + collapse spaces, keep short)\r                                                                                                                                       +
+                     left(regexp_replace(coalesce(nullif(p_fullname,''),'CONNECTA'), '\s+', ' ', 'g'), 24)\r                                                                                                            +
+                   );\r                                                                                                                                                                                                 +
+ \r                                                                                                                                                                                                                     +
+   -- ... your INSERT (unchanged except the two variables are now guaranteed non-null) ...\r                                                                                                                            +
+   -- make sure the column list includes "profession" and "short_name", like in your error snippet:\r                                                                                                                   +
+   --   short_name  => v_short_name\r                                                                                                                                                                                   +
+   --   profession  => v_profession\r                                                                                                                                                                                   +
+ \r                                                                                                                                                                                                                     +
+   -- return whatever you currently return (id/ref/etc)\r                                                                                                                                                               +
+   return jsonb_build_object(\r                                                                                                                                                                                         +
+     'id',        v_new_id,\r                                                                                                                                                                                           +
+     'ref',       v_referral_code,\r                                                                                                                                                                                    +
+     'level',     v_level,\r                                                                                                                                                                                            +
+     'serial',    v_serial,\r                                                                                                                                                                                           +
+     'connectaID', v_connecta_full\r                                                                                                                                                                                    +
+   );\r                                                                                                                                                                                                                 +
+ end;\r                                                                                                                                                                                                                 +
+ $function$                                                                                                                                                                                                             +
+ 
+(1 row)
+

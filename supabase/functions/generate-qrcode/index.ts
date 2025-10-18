@@ -21,14 +21,14 @@ export async function handler(req: Request): Promise<Response> {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=3600",
-      },
+        "Cache-Control": "public, max-age=3600"
+      }
     });
   } catch (error) {
     console.error("QR Code generation error:", error);
     return new Response(JSON.stringify({ error: "Failed to generate QR code" }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }
     });
   }
 }

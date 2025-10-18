@@ -1,0 +1,6 @@
+country,pattern,type,updated_at
+India,^[1-9][0-9]{5}$,numeric,2025-07-23 01:45:04.231008+00
+Bangladesh,^\\d{4}$,numeric,2025-07-23 01:45:04.231008+00
+United States,^\\d{5}(-\\d{4})?$,numeric,2025-07-23 01:45:04.231008+00
+United Kingdom,"^[A-Z]{1,2}\\d[A-Z\\d]? \\d[A-Z]{2}$",alphanumeric,2025-07-23 01:45:04.231008+00
+Canada,^[A-Z]\\d[A-Z] \\d[A-Z]\\d$,alphanumeric,2025-07-23 01:45:04.231008+00

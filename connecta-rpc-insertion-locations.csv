@@ -1,0 +1,91 @@
+"Category","File","Line","Match","Preview","VSCode"
+"Old RPC (v1)","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","684",".rpc(""generate_and_insert_connector_v1"", payload);","
+const { data: inserted, error } = await supabase
+  .rpc(""generate_and_insert_connector_v1"", payload);
+
+if (error) {","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:684"""
+"Old RPC (v1)","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","687","console.group(""[RPC error] generate_and_insert_connector_v1"");","
+if (error) {
+  console.group(""[RPC error] generate_and_insert_connector_v1"");
+  console.log(""code   :"", error.code);      // e.g. 23514, 23505, P0001
+  console.log(""message:"", error.message);   // e.g. violates check constraint ""chk_level_pair""","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:687"""
+"Old RPC (v1)","C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx","983","""generate_and_insert_connector_v1"",","      // Call RPC with the built payload
+      const { data: inserted, error: rpcErr } = await supabase.rpc(
+        ""generate_and_insert_connector_v1"",
+        payload
+      );","code -g ""C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx:983"""
+"Any generate RPC","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","684",".rpc(""generate_and_insert_connector_v1"", payload);","
+const { data: inserted, error } = await supabase
+  .rpc(""generate_and_insert_connector_v1"", payload);
+
+if (error) {","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:684"""
+"Any generate RPC","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","687","console.group(""[RPC error] generate_and_insert_connector_v1"");","
+if (error) {
+  console.group(""[RPC error] generate_and_insert_connector_v1"");
+  console.log(""code   :"", error.code);      // e.g. 23514, 23505, P0001
+  console.log(""message:"", error.message);   // e.g. violates check constraint ""chk_level_pair""","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:687"""
+"Any generate RPC","C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx","983","""generate_and_insert_connector_v1"",","      // Call RPC with the built payload
+      const { data: inserted, error: rpcErr } = await supabase.rpc(
+        ""generate_and_insert_connector_v1"",
+        payload
+      );","code -g ""C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx:983"""
+"Submit handler","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","505","async function handleSubmit() {","
+  // ------- submit -------
+  async function handleSubmit() {
+    if (submittingRef.current) return;
+    submittingRef.current = true;","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:505"""
+"Parent ref usage","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","595","let parentRefForRPC: string | null = null;   // connector referralCode or null","
+// For the RPC we pass ONLY a connector referralCode (or null).
+let parentRefForRPC: string | null = null;   // connector referralCode or null
+let p_child_branch: string | null = null;    // let RPC decide
+","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:595"""
+"Parent ref usage","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","602","parentRefForRPC = refTrim;","  if (looksLikeConnectorRef(refTrim)) {
+    // Connector parent ? pass the referralCode; RPC will set level='AB' automatically
+    parentRefForRPC = refTrim;
+    p_child_branch  = null; // not needed; RPC derives level
+  } else {","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:602"""
+"Parent ref usage","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","610","parentRefForRPC = null; // root insert (new AA)","      finalCountry   = aa.country;
+      finalState     = aa.state;
+      parentRefForRPC = null; // root insert (new AA)
+      p_child_branch  = null; // RPC derives 'AA' for root
+    } catch (e: any) {","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:610"""
+"Parent ref usage","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","620","console.log(""[parent resolution]"", { finalCountry, finalState, parentRefForRPC, p_child_branch });","
+
+console.log(""[parent resolution]"", { finalCountry, finalState, parentRefForRPC, p_child_branch });
+
+","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:620"""
+"Parent ref usage","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","673","p_parent_ref: parentRefForRPC ?? null,                           // ? allow null","  p_country: finalCountry || """",
+  p_state: finalState || """",
+  p_parent_ref: parentRefForRPC ?? null,                           // ? allow null
+  p_mobile_e164: normalizePhone(mobile),
+  p_recovery_e164: recoveryMobile ? normalizePhone(recoveryMobile) : null,","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:673"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","572","router.replace(`/post-join?${params.toString()}`);","              prefix: prefix || """",
+            });
+            router.replace(`/post-join?${params.toString()}`);
+          }
+          return;","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:572"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","729","router.replace(`/post-join?${params.toString()}`);","        prefix: prefix || """",
+      });
+      router.replace(`/post-join?${params.toString()}`);
+    }
+    return;","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:729"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","761","// 6) Navigate to /post-join with details","      }
+
+      // 6) Navigate to /post-join with details
+      if (refCode) {
+        const params = new URLSearchParams({","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:761"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx","774","router.replace(`/post-join?${params.toString()}`);","          daysLeft: String(daysLeft),
+        });
+        router.replace(`/post-join?${params.toString()}`);
+        return;
+      }","code -g ""C:\Users\User\connecta-next\src\components\forms\BusinessForm.tsx:774"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx","925","router.replace(`/post-join?${params.toString()}`);","          });
+
+          router.replace(`/post-join?${params.toString()}`);
+          return; // stop here: no insert, no RPC
+        }","code -g ""C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx:925"""
+"Post-join navigation","C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx","1018","router.replace(`/post-join?${params.toString()}`);","
+      // Navigate to the new page (no tabs, clean summary & share)
+      router.replace(`/post-join?${params.toString()}`);
+      return; // stop further UI state updates on this page
+    } catch (err: any) {","code -g ""C:\Users\User\connecta-next\src\components\OnboardingTabs.tsx:1018"""

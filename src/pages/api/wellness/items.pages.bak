@@ -1,0 +1,113 @@
+﻿// src/pages/api/wellness/items.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const WELLNESS_ADMIN_TOKEN = process.env.WELLNESS_ADMIN_TOKEN || "";
+
+type Row = {
+  id: string;
+  title: string;
+  is_visible: boolean;
+  language: string;
+  sort_index?: number | null;
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const timezone    = (req.query.timezone as string)   ?? "Asia/Kolkata";
+    const language    = (req.query.language as string)   ?? "en-IN";
+    const onlyVisible = String(req.query.onlyVisible ?? "true").toLowerCase() === "true";
+    const limitParam  = Number(req.query.limit);
+    const limit       = Number.isFinite(limitParam) ? Math.max(1, Math.min(200, limitParam)) : 50;
+
+    // Search
+    const q = (req.query.q as string | undefined)?.trim() || "";
+
+    // Pagination: page/pageSize first, else offset/limit
+    const pageParam     = Number(req.query.page);
+    const pageSizeParam = Number(req.query.pageSize);
+    const usePageMode   = Number.isFinite(pageParam) || Number.isFinite(pageSizeParam);
+
+    const page     = usePageMode ? Math.max(1, Number.isFinite(pageParam) ? pageParam : 1) : 1;
+    const pageSize = usePageMode ? Math.max(1, Math.min(200, Number.isFinite(pageSizeParam) ? pageSizeParam : limit)) : limit;
+    const offsetParam = Number(req.query.offset);
+    const offset  = usePageMode ? (page - 1) * pageSize : (Number.isFinite(offsetParam) ? Math.max(0, offsetParam) : 0);
+    const pageLimit = usePageMode ? pageSize : limit;
+
+    // Choose anon vs service role
+    let supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (!onlyVisible) {
+      const tokenFromHeader = req.headers["x-admin-token"];
+      const token = Array.isArray(tokenFromHeader) ? tokenFromHeader[0] : tokenFromHeader;
+      if (!WELLNESS_ADMIN_TOKEN || token !== WELLNESS_ADMIN_TOKEN) {
+        return res.status(403).json({ error: "FORBIDDEN", details: "Admin token required for onlyVisible=false" });
+      }
+      supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    }
+
+    // Build query with count
+    let query = supabase
+      .from("wellness_items")
+      .select("id,title,is_visible,language,sort_index", { count: "exact" })
+      .eq("language", language);
+
+    if (onlyVisible) query = query.eq("is_visible", true);
+    if (q) query = query.ilike("title", `%${q}%`);
+
+    // Order then range
+    query = query
+      .order("sort_index", { ascending: true, nullsFirst: true })
+      .order("id", { ascending: true })
+      .range(offset, offset + pageLimit - 1);
+
+    const { data, error, count } = await query;
+    if (error) {
+      console.error("Supabase error:", error);
+      return res.status(500).json({ error: "DB_ERROR", details: error.message });
+    }
+
+    const items = (data ?? []).map((r: Row) => ({
+      id: r.id,
+      title: r.title,
+      isVisible: r.is_visible,
+      language: r.language,
+    }));
+
+    const total = count ?? 0;
+    const effectivePageSize = pageLimit;        // what we used this call
+    const totalPages = effectivePageSize > 0 ? Math.max(1, Math.ceil(total / effectivePageSize)) : 1;
+    const currentPage = usePageMode ? page : Math.floor(offset / effectivePageSize) + 1;
+    const hasNext = currentPage < totalPages;
+    const hasPrev = currentPage > 1;
+
+    // Cache headers
+    if (onlyVisible) {
+      res.setHeader("Cache-Control", "public, max-age=30, s-maxage=60, stale-while-revalidate=120");
+    } else {
+      res.setHeader("Cache-Control", "no-store");
+    }
+
+    return res.status(200).json({
+      timezone,
+      language,
+      q,
+      onlyVisible,
+      // for clarity, return both modes
+      limit: pageLimit,
+      offset,
+      page: currentPage,
+      pageSize: effectivePageSize,
+      total,
+      totalPages,
+      hasNext,
+      hasPrev,
+      items,
+    });
+  } catch (e: any) {
+    console.error(e);
+    return res.status(500).json({ error: "UNEXPECTED", details: e?.message ?? String(e) });
+  }
+}

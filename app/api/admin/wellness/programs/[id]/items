@@ -1,0 +1,101 @@
+import { NextResponse } from "next/server";
+import { getSupabaseServer } from "@/lib/supabase-server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const ADMIN = process.env.WELLNESS_ADMIN_TOKEN || "";
+
+type ProgramItemIn = {
+  position_index: number;       // 1..50
+  master_code: string;          // code from master
+  marks?: number | null;
+  require_code?: boolean;
+  visible?: boolean;
+  duration_min?: number | null;
+  start_offset_sec?: number | null;
+};
+
+function bad(status: number, msg: string) {
+  return NextResponse.json({ ok: false, error: msg }, { status });
+}
+
+export async function GET(_req: Request, ctx: { params: { id: string } }) {
+  if (!ADMIN || _req.headers.get("x-admin-token") !== ADMIN) {
+    return bad(403, "FORBIDDEN");
+  }
+  const programId = ctx.params.id;
+  const supabase = getSupabaseServer();
+
+  const { data, error } = await supabase
+    .from("wellness_program_items")
+    .select("*")
+    .eq("program_id", programId)
+    .order("position_index", { ascending: true });
+
+  if (error) return bad(400, error.message);
+  return NextResponse.json({ ok: true, items: data ?? [] });
+}
+
+export async function PUT(req: Request, ctx: { params: { id: string } }) {
+  if (!ADMIN || req.headers.get("x-admin-token") !== ADMIN) {
+    return bad(403, "FORBIDDEN");
+  }
+  const programId = ctx.params.id;
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return bad(400, "Invalid JSON");
+  }
+  if (!Array.isArray(body)) {
+    return bad(400, "Expected JSON array");
+  }
+
+  // Clean + validate
+  const cleaned: ProgramItemIn[] = (body as any[]).map((r) => ({
+    position_index: Number(r?.position_index),
+    master_code: String(r?.master_code ?? "").trim(),
+    marks: r?.marks == null ? null : Number(r?.marks),
+    require_code: Boolean(r?.require_code),
+    visible: r?.visible === undefined ? true : Boolean(r?.visible),
+    duration_min: r?.duration_min == null ? null : Number(r?.duration_min),
+    start_offset_sec: r?.start_offset_sec == null ? null : Number(r?.start_offset_sec),
+  }));
+
+  for (const r of cleaned) {
+    if (!(Number.isFinite(r.position_index) && r.position_index >= 1 && r.position_index <= 50)) {
+      return bad(400, "position_index must be 1..50 (integer)");
+    }
+    if (!r.master_code) {
+      return bad(400, "master_code required");
+    }
+  }
+
+  const supabase = getSupabaseServer();
+
+  // NOTE: non-atomic two-step. For full atomicity, move to a Postgres function and call via rpc().
+  const { error: delErr } = await supabase
+    .from("wellness_program_items")
+    .delete()
+    .eq("program_id", programId);
+
+  if (delErr) return bad(400, delErr.message);
+
+  const rows = cleaned.map((r) => ({ ...r, program_id: programId }));
+
+  if (rows.length === 0) {
+    // All cleared — success
+    return NextResponse.json({ ok: true, items: [] });
+  }
+
+  const { data, error } = await supabase
+    .from("wellness_program_items")
+    .insert(rows)
+    .select("*")
+    .order("position_index", { ascending: true });
+
+  if (error) return bad(400, error.message);
+  return NextResponse.json({ ok: true, items: data ?? [] });
+}

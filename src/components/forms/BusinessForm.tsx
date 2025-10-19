@@ -955,6 +955,7 @@ console.log("[parent resolution]", {
 // --- keep your existing p_payload as-is (it gets stored in payload_json) ---
 // --- Step 7 hygiene: normalize before building payload ---
 const websiteNorm = withHttps(website || "");
+
 // --- normalized p_payload (stored in payload_json) ---
 const emailNorm = normalizeEmail(email);
 const upiNorm = normalizeUpi(upiId);
@@ -983,7 +984,7 @@ const p_payload: any = {
   video_url: videoUrl || undefined,
   google_map_link: mapLink || undefined,
   links: {
-    website: withHttps(website || ""),
+    website: websiteNorm,
     facebook,
     instagram,
     ytShorts,
@@ -1004,20 +1005,20 @@ console.log("[profile-score/preview]", scorePreview);
 // Optional: attach for diagnostics (not persisted/relied upon server-side)
 (p_payload as any).__score_preview = scorePreview;
 
-
-
 // --- NEW wrapper for v3 (single, correct call) ---
 const rpcArgs = {
   p_country: finalCountry,
   p_state: finalState,
-  p_parent_ref: parentRefForRPC,                    // connector referral or null
+  p_parent_ref: parentRefForRPC,
+  p_child_branch, // already computed earlier; may be null
   p_mobile: normalizePhone(mobileNumberFromURL || mobile),
-  p_fullname: "",                                   // business flow: keep empty
+  p_fullname: "",
   p_email: email || "",
   p_extra: { suffix: (shortCompany || company).slice(0, 10) },
   p_recovery_e164: recoveryMobile ? normalizePhone(recoveryMobile) : null,
-  p_payload,                                        // everything else into payload_json
+  p_payload,
 };
+
 
 console.log("[RPC v3 payload]", rpcArgs);
 

@@ -955,6 +955,7 @@ console.log("[parent resolution]", {
 // --- keep your existing p_payload as-is (it gets stored in payload_json) ---
 // --- Step 7 hygiene: normalize before building payload ---
 const websiteNorm = withHttps(website || "");
+
 // --- normalized p_payload (stored in payload_json) ---
 const emailNorm = normalizeEmail(email);
 const upiNorm = normalizeUpi(upiId);
@@ -983,7 +984,7 @@ const p_payload: any = {
   video_url: videoUrl || undefined,
   google_map_link: mapLink || undefined,
   links: {
-  website: websiteNorm,
+    website: websiteNorm,
     facebook,
     instagram,
     ytShorts,
@@ -1003,8 +1004,6 @@ const scorePreview = scoreBusinessPayload(p_payload);
 console.log("[profile-score/preview]", scorePreview);
 // Optional: attach for diagnostics (not persisted/relied upon server-side)
 (p_payload as any).__score_preview = scorePreview;
-
-
 
 // --- NEW wrapper for v3 (single, correct call) ---
 const rpcArgs = {

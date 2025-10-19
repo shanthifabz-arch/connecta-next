@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Force light mode + sane defaults */
+:root { color-scheme: light; }
+html, body { background: #fff; color: #111; margin: 0; padding: 0; }
+
+/* Make sure form controls match our design by default */
+input, select, textarea, button { font: inherit; color: inherit; }
+
+/* Keep images responsive */
+img { max-width: 100%; height: auto; display: block; }

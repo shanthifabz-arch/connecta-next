@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import Papa from "papaparse";
+import Papa, { ParseResult } from "papaparse";
+
+type RawCsvRow = {
+  mobile: string;
+  COUNTRY: string;
+  STATE: string;
+  LANGUAGE: string;
+  aa_joining_code: string;
+};
+
 
 export default function AAConnectorUpload() {
   const [connectors, setConnectors] = useState<any[]>([]);
@@ -30,54 +39,66 @@ export default function AAConnectorUpload() {
 
   // Fetch AA connectors
   const fetchConnectors = async () => {
-    const { data, error } = await supabase
-      .from("aa_connectors")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      console.error("Error fetching connectors:", error);
-      return;
-    }
-    setConnectors(data || []);
-    setFiltered(data || []);
-  };
+  const { data, error } = await supabase
+    .from("aa_connectors")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching connectors:", error);
+    return;
+  }
+  const list = Array.isArray(data) ? data : [];
+  setConnectors(list);
+  setFiltered(list);
+};
+
 
   // Fetch country states and languages from Supabase
   useEffect(() => {
-    fetchConnectors();
+  fetchConnectors();
 
-    async function fetchCountryStates() {
-      const { data, error } = await supabase
-        .from("country_states")
-        .select("country, states");
-      if (error) {
-        console.error("Error fetching country_states:", error);
-        return;
-      }
-      const grouped: { [key: string]: string[] } = {};
-      data.forEach(({ country, states }: any) => {
-        grouped[country] = states.map((s: any) => s.name);
-      });
-      setCountryStateData(grouped);
+  async function fetchCountryStates() {
+    const { data, error } = await supabase
+      .from("country_states")
+      .select("country, states");
+
+    if (error) {
+      console.error("Error fetching country_states:", error);
+      return;
     }
+    const grouped: { [key: string]: string[] } = {};
+    (data || []).forEach((row: any) => {
+      const country = String(row?.country ?? "");
+      const statesArr = Array.isArray(row?.states) ? row.states : [];
+      grouped[country] = statesArr
+        .map((s: any) => (s?.name ? String(s.name) : ""))
+        .filter(Boolean);
+    });
+    setCountryStateData(grouped);
+  }
 
-    async function fetchLanguages() {
-      const { data, error } = await supabase
-        .from("languages")
-        .select("label")
-        .eq("enabled", true)
-        .order("label");
-      if (error) {
-        console.error("Error fetching languages:", error);
-        return;
-      }
-      const uniqueLabels = Array.from(new Set(data.map((item: any) => item.label)));
-      setLanguageOptions(uniqueLabels);
+  async function fetchLanguages() {
+    const { data, error } = await supabase
+      .from("languages")
+      .select("label, enabled")
+      .eq("enabled", true)
+      .order("label");
+
+    if (error) {
+      console.error("Error fetching languages:", error);
+      return;
     }
+    const uniqueLabels = Array.from(
+      new Set((data || []).map((item: any) => String(item.label)))
+    );
+    setLanguageOptions(uniqueLabels);
+  }
 
-    fetchCountryStates();
-    fetchLanguages();
-  }, []);
+  fetchCountryStates();
+  fetchLanguages();
+}, []);
+
 
   // Filter connectors on search term
   useEffect(() => {
@@ -115,210 +136,201 @@ export default function AAConnectorUpload() {
 
   // Handle CSV upload and insert valid, unique mobile numbers with header validation
   const handleUploadClick = () => {
-    if (!csvFile) return;
-    if (!selectedCountry || !selectedState || !selectedLanguage) {
-      alert("Please select Country, State, and Language before uploading.");
-      return;
-    }
+  if (!csvFile) return;
+  if (!selectedCountry || !selectedState || !selectedLanguage) {
+    alert("Please select Country, State, and Language before uploading.");
+    return;
+  }
 
-    setUploading(true);
-    setCsvSuccess("");
-    setSkippedNumbers([]);
-    setFormatErrors([]);
+  setUploading(true);
+  setCsvSuccess("");
+  setSkippedNumbers([]);
+  setFormatErrors([]);
 
-    Papa.parse(csvFile, {
-      header: true,
-      skipEmptyLines: true,
-      complete: async (results: any) => {
-        const headerKeys = results.meta.fields || [];
+  Papa.parse<RawCsvRow>(csvFile, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async (results: ParseResult<RawCsvRow>) => {
+      const headerKeys = results.meta.fields ?? [];
 
-        // Validate required columns present including aa_joining_code
-        const requiredHeaders = ["mobile", "COUNTRY", "STATE", "LANGUAGE", "aa_joining_code"];
-        const missingHeaders = requiredHeaders.filter(
-          (h) => !headerKeys.includes(h)
+      // Validate required columns present including aa_joining_code
+      const requiredHeaders = ["mobile", "COUNTRY", "STATE", "LANGUAGE", "aa_joining_code"];
+      const missingHeaders = requiredHeaders.filter((h) => !headerKeys.includes(h));
+      if (missingHeaders.length > 0) {
+        alert(
+          `CSV missing required columns: ${missingHeaders.join(", ")}. Please fix and try again.`
         );
-        if (missingHeaders.length > 0) {
-          alert(
-            `CSV missing required columns: ${missingHeaders.join(
-              ", "
-            )}. Please fix and try again.`
-          );
-          setUploading(false);
-          return;
-        }
-
-        // Validate rows match selected COUNTRY, STATE, LANGUAGE (case-insensitive)
-        const mismatches = results.data.filter(
-          (row: any) =>
-            row.COUNTRY?.toLowerCase() !== selectedCountry.toLowerCase() ||
-            row.STATE?.toLowerCase() !== selectedState.toLowerCase() ||
-            row.LANGUAGE?.toLowerCase() !== selectedLanguage.toLowerCase()
-        );
-
-        if (mismatches.length > 0) {
-          alert(
-            `CSV rows contain COUNTRY, STATE or LANGUAGE values that do not match the selected options.\n` +
-              `Please fix the CSV to match:\nCOUNTRY = ${selectedCountry}\nSTATE = ${selectedState}\nLANGUAGE = ${selectedLanguage}`
-          );
-          setUploading(false);
-          return;
-        }
-
-        // Validate all rows have aa_joining_code and not empty
-        const missingCodeRows = results.data.filter(
-          (row: any) => !row.aa_joining_code || row.aa_joining_code.trim() === ""
-        );
-        if (missingCodeRows.length > 0) {
-          alert(`Some rows are missing the required 'aa_joining_code' field. Please fill it.`);
-          setUploading(false);
-          return;
-        }
-
-        const rows = results.data;
-
-        const allMobiles = rows
-          .map((row: any) => String(row.mobile).trim())
-          .filter((mobile: string) => mobile);
-
-        const validMobiles = allMobiles.filter((mobile: string) =>
-          /^\+[1-9]\d{9,14}$/.test(mobile)
-        );
-        const invalidMobiles = allMobiles.filter(
-          (mobile: string) => !/^\+[1-9]\d{9,14}$/.test(mobile)
-        );
-
-        const { data: existing, error } = await supabase
-          .from("aa_connectors")
-          .select("mobile")
-          .in("mobile", validMobiles);
-
-        if (error) {
-          console.error("âŒ Supabase fetch error:", error);
-          alert("Error checking duplicates.");
-          setUploading(false);
-          return;
-        }
-
-        const existingMobiles = new Set(existing.map((e: any) => e.mobile));
-        const newEntries = rows
-          .filter((row: any) => {
-            const mobile = String(row.mobile).trim();
-            return (
-              /^\+[1-9]\d{9,14}$/.test(mobile) &&
-              !existingMobiles.has(mobile) &&
-              row.aa_joining_code.trim() !== ""
-            );
-          })
-          .map((row: any) => ({
-            mobile: String(row.mobile).trim(),
-            COUNTRY: selectedCountry,
-            STATE: selectedState,
-            LANGUAGE: selectedLanguage,
-            aa_joining_code: row.aa_joining_code.trim(),
-          }));
-
-        const skipped = validMobiles.filter((num: string) => existingMobiles.has(num));
-
-        if (newEntries.length === 0) {
-          setCsvSuccess(
-            `âŒ No new valid entries. ${skipped.length} duplicates. ${invalidMobiles.length} invalid.`
-          );
-          setSkippedNumbers(skipped);
-          setFormatErrors(invalidMobiles);
-          setUploading(false);
-          return;
-        }
-
-        const { error: insertError } = await supabase
-          .from("aa_connectors")
-          .insert(newEntries);
-
-        if (insertError) {
-          console.error("âŒ Supabase insert error:", insertError);
-          alert("Upload failed. Check console for error.");
-        } else {
-          setCsvSuccess(
-            `âœ… Uploaded ${newEntries.length} new connector(s). âŒ Skipped ${skipped.length} duplicate(s). âŒ ${invalidMobiles.length} invalid format.`
-          );
-          setSkippedNumbers(skipped);
-          setFormatErrors(invalidMobiles);
-          fetchConnectors();
-        }
-
         setUploading(false);
-        setCsvFile(null);
-      },
-      error: (err) => {
-        alert("CSV parsing failed.");
-        console.error(err);
+        return;
+      }
+
+      const rows = Array.isArray(results.data) ? results.data : [];
+
+      // Validate rows match selected COUNTRY, STATE, LANGUAGE (case-insensitive)
+      const mismatches = rows.filter(
+        (row) =>
+          (row.COUNTRY || "").toLowerCase() !== selectedCountry.toLowerCase() ||
+          (row.STATE || "").toLowerCase() !== selectedState.toLowerCase() ||
+          (row.LANGUAGE || "").toLowerCase() !== selectedLanguage.toLowerCase()
+      );
+
+      if (mismatches.length > 0) {
+        alert(
+          `CSV rows contain COUNTRY, STATE or LANGUAGE values that do not match the selected options.\n` +
+            `Please fix the CSV to match:\nCOUNTRY = ${selectedCountry}\nSTATE = ${selectedState}\nLANGUAGE = ${selectedLanguage}`
+        );
         setUploading(false);
-      },
-    });
-  };
+        return;
+      }
+
+      // Validate all rows have aa_joining_code and not empty
+      const missingCodeRows = rows.filter(
+        (row) => !row.aa_joining_code || row.aa_joining_code.trim() === ""
+      );
+      if (missingCodeRows.length > 0) {
+        alert(`Some rows are missing the required 'aa_joining_code' field. Please fill it.`);
+        setUploading(false);
+        return;
+      }
+
+      const allMobiles = rows
+        .map((row) => String(row.mobile ?? "").trim())
+        .filter((mobile) => mobile);
+
+      const validMobiles = allMobiles.filter((mobile) => /^\+[1-9]\d{9,14}$/.test(mobile));
+      const invalidMobiles = allMobiles.filter((mobile) => !/^\+[1-9]\d{9,14}$/.test(mobile));
+
+      const { data: existing, error } = await supabase
+        .from("aa_connectors")
+        .select("mobile")
+        .in("mobile", validMobiles);
+
+      if (error) {
+        console.error("Supabase fetch error:", error);
+        alert("Error checking duplicates.");
+        setUploading(false);
+        return;
+      }
+
+      const existingMobiles = new Set((existing || []).map((e: any) => String(e.mobile)));
+      const newEntries = rows
+        .filter((row) => {
+          const mobile = String(row.mobile ?? "").trim();
+          return (
+            /^\+[1-9]\d{9,14}$/.test(mobile) &&
+            !existingMobiles.has(mobile) &&
+            String(row.aa_joining_code ?? "").trim() !== ""
+          );
+        })
+        .map((row) => ({
+          mobile: String(row.mobile).trim(),
+          COUNTRY: selectedCountry,
+          STATE: selectedState,
+          LANGUAGE: selectedLanguage,
+          aa_joining_code: String(row.aa_joining_code).trim(),
+        }));
+
+      const skipped = validMobiles.filter((num) => existingMobiles.has(num));
+
+      if (newEntries.length === 0) {
+        setCsvSuccess(
+          `❌ No new valid entries. ${skipped.length} duplicates. ${invalidMobiles.length} invalid.`
+        );
+        setSkippedNumbers(skipped);
+        setFormatErrors(invalidMobiles);
+        setUploading(false);
+        return;
+      }
+
+      const { error: insertError } = await supabase.from("aa_connectors").insert(newEntries);
+
+      if (insertError) {
+        console.error("Supabase insert error:", insertError);
+        alert("Upload failed. Check console for error.");
+      } else {
+        setCsvSuccess(
+          `✅ Uploaded ${newEntries.length} new connector(s). ❌ Skipped ${skipped.length} duplicate(s). ❌ ${invalidMobiles.length} invalid format.`
+        );
+        setSkippedNumbers(skipped);
+        setFormatErrors(invalidMobiles);
+        fetchConnectors();
+      }
+
+      setUploading(false);
+      setCsvFile(null);
+    },
+    error: (err) => {
+      alert("CSV parsing failed.");
+      console.error(err);
+      setUploading(false);
+    },
+  });
+};
+
 
   // Handle single mobile add submit (no change needed unless you want aa_joining_code input)
   const handleSingleAdd = async () => {
-    const mobileTrimmed = singleMobile.trim();
+  const mobileTrimmed = singleMobile.trim();
 
-    if (!mobileTrimmed) {
-      alert("Please enter a mobile number.");
-      return;
-    }
-    if (!/^\+[1-9]\d{9,14}$/.test(mobileTrimmed)) {
-      alert("Mobile number format invalid. Use E.164 format starting with + and country code.");
-      return;
-    }
-    if (!selectedCountry || !selectedState || !selectedLanguage) {
-      alert("Please select Country, State, and Language.");
-      return;
-    }
+  if (!mobileTrimmed) {
+    alert("Please enter a mobile number.");
+    return;
+  }
+  if (!/^\+[1-9]\d{9,14}$/.test(mobileTrimmed)) {
+    alert("Mobile number format invalid. Use E.164 format starting with + and country code.");
+    return;
+  }
+  if (!selectedCountry || !selectedState || !selectedLanguage) {
+    alert("Please select Country, State, and Language.");
+    return;
+  }
 
-    setUploading(true);
-    setCsvSuccess("");
-    setSkippedNumbers([]);
-    setFormatErrors([]);
+  setUploading(true);
+  setCsvSuccess("");
+  setSkippedNumbers([]);
+  setFormatErrors([]);
 
-    // Check if already exists with maybeSingle to avoid 406 errors
-    const { data: existing, error: fetchError } = await supabase
-      .from("aa_connectors")
-      .select("mobile")
-      .eq("mobile", mobileTrimmed)
-      .limit(1)
-      .maybeSingle();
+  // Check if already exists with maybeSingle to avoid 406 errors
+  const { data: existing, error: fetchError } = await supabase
+  .from("aa_connectors")
+  .select("mobile")
+  .eq("mobile", mobileTrimmed)
+  .maybeSingle();
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      alert("Error checking existing mobile.");
-      setUploading(false);
-      return;
-    }
-    if (existing) {
-      setCsvSuccess(`âŒ Mobile number ${mobileTrimmed} already exists.`);
-      setUploading(false);
-      return;
-    }
 
-    // Insert new record without aa_joining_code here (or add if you want)
-    const { error: insertError } = await supabase.from("aa_connectors").insert([
-      {
-        mobile: mobileTrimmed,
-        COUNTRY: selectedCountry,
-        STATE: selectedState,
-        LANGUAGE: selectedLanguage,
-        // aa_joining_code: singleAAJoiningCode || "", // uncomment if you add input
-      },
-    ]);
-
-    if (insertError) {
-      alert("Error inserting mobile. Check console.");
-      console.error(insertError);
-    } else {
-      setCsvSuccess(`âœ… Added mobile number ${mobileTrimmed}.`);
-      fetchConnectors();
-      setSingleMobile("");
-    }
-
+  if (fetchError && (fetchError as any)?.code !== "PGRST116") {
+    alert("Error checking existing mobile.");
     setUploading(false);
-  };
+    return;
+  }
+  if (existing) {
+    setCsvSuccess(`❌ Mobile number ${mobileTrimmed} already exists.`);
+    setUploading(false);
+    return;
+  }
+
+  const { error: insertError } = await supabase.from("aa_connectors").insert([
+    {
+      mobile: mobileTrimmed,
+      COUNTRY: selectedCountry,
+      STATE: selectedState,
+      LANGUAGE: selectedLanguage,
+      // aa_joining_code: singleAAJoiningCode || "", // uncomment if you add input
+    },
+  ]);
+
+  if (insertError) {
+    alert("Error inserting mobile. Check console.");
+    console.error(insertError);
+  } else {
+    setCsvSuccess(`✅ Added mobile number ${mobileTrimmed}.`);
+    fetchConnectors();
+    setSingleMobile("");
+  }
+
+  setUploading(false);
+};
+
 
   return (
     <div className="p-6 space-y-4">

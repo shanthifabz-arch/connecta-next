@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// âœ… Supabase config
+//  Supabase config
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -34,7 +34,7 @@ export default function LanguageManagement() {
       .order("label", { ascending: true });
 
     if (error) {
-      console.error("âŒ Error fetching languages:", error.message);
+      console.error(" Error fetching languages:", error.message);
     } else {
       setLanguages(data as Language[]);
     }
@@ -49,7 +49,7 @@ export default function LanguageManagement() {
       .eq("id", id);
 
     if (error) {
-      alert("âŒ Failed to update language status.");
+      alert(" Failed to update language status.");
       console.error(error);
     } else {
       fetchLanguages(); // Refresh after update
@@ -59,7 +59,7 @@ export default function LanguageManagement() {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4 text-blue-700">
-        ðŸŒ Language Management
+         Language Management
       </h2>
 
       {loading ? (

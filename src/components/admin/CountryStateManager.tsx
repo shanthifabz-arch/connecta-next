@@ -99,30 +99,36 @@ export default function CountryStateManager() {
     );
   };
 
-  // Save updated country back to Supabase
-  const handleSave = async (updatedCountry: CountryStateRow) => {
-    setStatus("Saving changes...");
+ // Save updated country back to Supabase
+const handleSave = async (updatedCountry: CountryStateRow) => {
+  setStatus("Saving changes...");
 
-    if (updatedCountry.country.toLowerCase() === "india") {
-      updatedCountry.states = indianStates;
-    }
+  // Preserve your India override exactly
+  if (updatedCountry.country.toLowerCase() === "india") {
+    updatedCountry.states = indianStates;
+  }
 
-    const { error } = await supabase
-      .from("country_states")
-      .upsert([updatedCountry], { onConflict: ["id"] });
+  // In supabase-js v2, onConflict must be a STRING, not string[]
+  // We also request the row back to keep local state perfectly in sync
+  const { data: saved, error } = await supabase
+    .from("country_states")
+   .upsert([updatedCountry]).select().single();
 
-    if (error) {
-      setStatus(`Error saving: ${error.message}`);
-    } else {
-      setStatus("Changes saved successfully.");
-      setCountries((prev) =>
-        prev.map((c) => (c.id === updatedCountry.id ? updatedCountry : c))
-      );
-      setFilteredCountries((prev) =>
-        prev.map((c) => (c.id === updatedCountry.id ? updatedCountry : c))
-      );
-    }
-  };
+  if (error) {
+    setStatus(`Error saving: ${error.message}`);
+  } else {
+    const next = saved ?? updatedCountry;
+    setStatus("Changes saved successfully.");
+
+    setCountries((prev) =>
+      prev.map((c) => (c.id === next.id ? next : c))
+    );
+    setFilteredCountries((prev) =>
+      prev.map((c) => (c.id === next.id ? next : c))
+    );
+  }
+};
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow">

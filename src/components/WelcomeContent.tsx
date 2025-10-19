@@ -17,6 +17,16 @@ import { supabase } from "@/lib/supabaseClient";
 const AA_SEED_PATTERN = /^[A-Za-z]+(?:[_\s][A-Za-z]+)*(?:[_\s]M\d+)$/i;
 const isAASeed = (code: string) => AA_SEED_PATTERN.test((code || "").trim());
 
+// --- Helper: normalize old short serials: INTAA13 -> INTAA000000013 ---
+function padINTA(ref: string): string {
+  const re = /(.*_INTA[A-Z]{2})(\d+)(.*)$/i;
+  const m = (ref || "").trim().match(re);
+  if (!m) return ref;
+  const [_, head, digits, tail] = m;
+  return `${head}${digits.padStart(9, "0")}${tail}`;
+}
+
+
 // === Language helpers (SINGLE definition — do not duplicate) ===
 type LangItem = {
   language_iso_code?: string | null;
@@ -52,6 +62,8 @@ const codeToReadableName: Record<string, string> = {
   en: "English",
   ta: "Tamil",
 };
+// One canonical label for the UI & logic
+const ALL_STATES = "All States";
 
 // Prefer ISO (e.g., "ta"), then fall back to language_code, then code
 const langCodeFrom = (lang: LangItem | null | undefined): string =>
@@ -193,7 +205,7 @@ function parseReferralToSuggestion(
   }
 
   // If no match or no states configured, default to "ALL STATES"
-  return { country: foundCountry, state: foundState ?? "ALL STATES" };
+ return { country: foundCountry, state: foundState ?? ALL_STATES };
 }
 
 // --- Helper: call /api/validate-referral-mobile and return a uniform result ---
@@ -553,7 +565,7 @@ function toE164(dialCode: string, input: string): string {
 
 
 export default function WelcomeContent() {
-  const { t, i18n } = useTranslation();
+ const { t, i18n, ready } = useTranslation(undefined, { useSuspense: false });
   const router = useRouter();
 
   const { languageOptions = [], loading: loadingLanguages } = useLanguageOptions();
@@ -578,7 +590,7 @@ export default function WelcomeContent() {
   const [referralCode, setReferralCode] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+ const [isReady, setIsReady] = useState(true);
   const [referralValid, setReferralValid] = useState<boolean | null>(null);
   const [mobileValid, setMobileValid] = useState<boolean | null>(null);
   const [validatingReferral, setValidatingReferral] = useState(false);
@@ -636,14 +648,13 @@ useEffect(() => {
 }, [recoveryMobile]);
 
 
-  // i18n readiness
-  useEffect(() => {
-    if (i18n.isInitialized) {
-      setIsReady(true);
-    } else {
-      i18n.on("initialized", () => setIsReady(true));
-    }
-  }, [i18n]);
+  // i18n readiness — rely on `ready` from react-i18next (no `.on` listener)
+useEffect(() => {
+  if (ready || i18n?.isInitialized) {
+    setIsReady(true);
+  }
+}, [ready, i18n?.isInitialized]);
+
 
   // persist selected country
   useEffect(() => {
@@ -692,11 +703,12 @@ useEffect(() => {
     }
     const list = (statesByCountry as Record<string, any[]>)[selectedCountry] || [];
     setSelectedState((prev) => {
-      if (!prev) return prev;
-      if (prev === "ALL STATES") return prev;
-      const exists = list.some((it) => (typeof it === "string" ? it : (it as any).name) === prev);
-      return exists ? prev : "";
-    });
+  if (!prev) return prev;
+  if (prev === ALL_STATES) return prev;
+  const exists = list.some((it) => (typeof it === "string" ? it : (it as any).name) === prev);
+  return exists ? prev : "";
+});
+
   }, [selectedCountry, statesByCountry]);
 
 // strip any typed country code from mobile + recovery when country changes
@@ -791,7 +803,7 @@ useEffect(() => {
   // ========== FIXED: single, clean definition ==========
 // ========== FIXED: single, clean definition ==========
 async function validateReferralWithAPI() {
-  const trimmed = (referralCode || "").trim();
+ const trimmed = padINTA((referralCode || "").trim());
   if (!trimmed) {
     const msg = "Please enter referral code.";
     alert(msg);
@@ -810,58 +822,58 @@ async function validateReferralWithAPI() {
   setValidatingReferral(true);
   try {
     // 1) Parse the intended country/state from the referral text
-    const suggestion = parseReferralToSuggestion(trimmed, countries, statesByCountry);
+const suggestion = parseReferralToSuggestion(trimmed, countries, statesByCountry);
 
-    if (suggestion) {
-      const requiredCountry = suggestion.country;
-      const requiredState = suggestion.state || "ALL STATES";
+if (suggestion) {
+  const requiredCountry = suggestion.country;
+  const requiredState = suggestion.state || ALL_STATES;
 
-      // 2) Enforce country selection first
-      if (!selectedCountry || selectedCountry !== requiredCountry) {
-        const msg = `Select ${requiredCountry} in Select country code column`;
-        alert(msg);
-        setReferralValid(null);           // do NOT mark as invalid; just show guidance
-        setReferralMsg(msg);
-        setReferralMsgType("error");
-        const el = document.getElementById("country") as HTMLSelectElement | null;
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-        el?.focus();
-        return;
-      }
+  // 2) Enforce country selection first
+  if (!selectedCountry || selectedCountry !== requiredCountry) {
+    const msg = `Select ${requiredCountry} in Select country code column`;
+    alert(msg);
+    setReferralValid(null);           // do NOT mark as invalid; just show guidance
+    setReferralMsg(msg);
+    setReferralMsgType("error");
+    const el = document.getElementById("country") as HTMLSelectElement | null;
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.focus();
+    return;
+  }
 
-      // 3) Enforce state next (or "All States" when the referral has no state)
-      const needsAllStates = requiredState === "ALL STATES";
-      const stateOK = needsAllStates
-        ? selectedState === "ALL STATES"
-        : selectedState === requiredState;
+  // 3) Enforce state next (or "All States" when the referral has no state)
+  const needsAllStates = requiredState === ALL_STATES;
+  const stateOK = needsAllStates
+    ? selectedState === ALL_STATES
+    : selectedState === requiredState;
 
-      if (!stateOK) {
-        const msg = `Select ${needsAllStates ? "All States" : requiredState} in Select state code column`;
-        alert(msg);
-        setReferralValid(null);           // do NOT mark as invalid; just show guidance
-        setReferralMsg(msg);
-        setReferralMsgType("error");
-        const el = document.getElementById("state") as HTMLSelectElement | null;
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-        el?.focus();
-        return;
-      }
-    } else {
-      // If the referral couldn't be parsed, require explicit selections
-      if (!selectedCountry || !selectedState) {
-        const msg = "Please select Country and State before validating the referral.";
-        alert(msg);
-        setReferralValid(null);           // guidance, not "invalid"
-        setReferralMsg(msg);
-        setReferralMsgType("error");
-        const el = (!selectedCountry
-          ? document.getElementById("country")
-          : document.getElementById("state")) as HTMLSelectElement | null;
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-        el?.focus();
-        return;
-      }
-    }
+  if (!stateOK) {
+    const msg = `Select ${needsAllStates ? ALL_STATES : requiredState} in Select state code column`;
+    alert(msg);
+    setReferralValid(null);           // do NOT mark as invalid; just show guidance
+    setReferralMsg(msg);
+    setReferralMsgType("error");
+    const el = document.getElementById("state") as HTMLSelectElement | null;
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.focus();
+    return;
+  }
+} else {
+  // If the referral couldn't be parsed, require explicit selections
+  if (!selectedCountry || !selectedState) {
+    const msg = "Please select Country and State before validating the referral.";
+    alert(msg);
+    setReferralValid(null);           // guidance, not "invalid"
+    setReferralMsg(msg);
+    setReferralMsgType("error");
+    const el = (!selectedCountry
+      ? document.getElementById("country")
+      : document.getElementById("state")) as HTMLSelectElement | null;
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    el?.focus();
+    return;
+  }
+}
 
     // 4) Country/State match the referral — call the server
     const type: "aa" | "child" | "auto" = isAASeed(trimmed) ? "aa" : "child";
@@ -888,6 +900,9 @@ async function validateReferralWithAPI() {
     alert(okMsg);
     setReferralMsg(okMsg);
     setReferralMsgType("success");
+    // After referral success, check AA→AB≥95% gate and store the flag
+await checkConnectorsGateByReferral(trimmed);
+
   } catch (err: any) {
     setReferralValid(false);
     const msg = err?.message || "Unable to connect to server";
@@ -898,6 +913,38 @@ async function validateReferralWithAPI() {
     setValidatingReferral(false);
   }
 }
+
+// ⬇️ BLOCK L — Check Connectors gate via Supabase RPC
+async function checkConnectorsGateByReferral(ref: string) {
+  const trimmed = (ref || "").trim();
+  if (!trimmed) {
+    setAllowConnectors(true);   // no ref → no gate
+    setGateInfo(null);
+    return;
+  }
+  try {
+    const { data, error } = await supabase.rpc("is_aa_connectors_tab_unlocked", { p_ref: trimmed });
+    if (error) {
+      console.warn("[gate] RPC error:", error.message);
+      setAllowConnectors(true); // fail open
+      setGateInfo(null);
+      return;
+    }
+    const row = Array.isArray(data) ? data[0] : data;
+    const isAA = !!row?.is_aa;
+    const businessPct = typeof row?.business_pct === "number" ? row.business_pct : null;
+    const unlocked = !!row?.unlocked;
+
+    setGateInfo({ isAA, businessPct, unlocked });
+    setAllowConnectors(isAA ? unlocked : true); // non-AA → always allowed
+  } catch (e: any) {
+    console.warn("[gate] exception:", e?.message || e);
+    setAllowConnectors(true); // fail open
+    setGateInfo(null);
+  }
+}
+// ⬆️ End BLOCK L
+
 
 // ↓ Add this inside WelcomeContent(), anywhere above `return ( ... )`
 async function validateMobileWithAPI() {
@@ -940,7 +987,7 @@ setMobileMsgType(null);
 
 
   try {
-    const trimmedCode = (referralCode || "").trim();
+    const trimmedCode = padINTA((referralCode || "").trim());
 
     // build full E.164-like number: <dialCode><local part>
     const allPrefixes = Object.values(countryDialingCodes);
@@ -1030,24 +1077,6 @@ if (reason === "COUNTRY_MISMATCH" || reason === "STATE_MISMATCH") {
   return;
 }
 
-
-    // 🔹 Existing reason handling (unchanged)
-    if (reason === "MOBILE_EXISTS") {
-      alert(error || "Mobile number already registered.");
-      return;
-    }
-    if (reason === "MOBILE_ALREADY_ON_TREE") {
-      alert(error || "This mobile is already registered under the same referral.");
-      return;
-    }
-    if (reason === "MOBILE_BELONGS_TO_OTHER") {
-      alert(error || "This mobile is already registered under a different referral.");
-      return;
-    }
-    if (reason === "COUNTRY_MISMATCH" || reason === "STATE_MISMATCH") {
-      alert(error || "Country/State mismatch with referral.");
-      return;
-    }
 
       } catch (err: any) {
     // If an AbortError slipped through, do nothing
@@ -1199,6 +1228,14 @@ async function handleVerifyOtp() {
 }
 // ⬆️ End BLOCK I
 
+// ⬇️ BLOCK K — Connectors tab gate (AA ≥95% business)
+const [allowConnectors, setAllowConnectors] = useState<boolean>(true);
+const [gateInfo, setGateInfo] = useState<{
+  isAA: boolean;
+  businessPct: number | null;
+  unlocked: boolean;
+} | null>(null);
+// ⬆️ End BLOCK K
 
   function validateForm() {
   if (!referralValid) {
@@ -1261,16 +1298,15 @@ async function handleVerifyOtp() {
   if (!validateForm()) return;
 
   const selectedLanguageObj =
-    languageOptions.find(
-      (l) =>
-        (l.code || l.language_code || "").toLowerCase() ===
-        (selectedLanguage || "").toLowerCase()
-    ) ||
-    languageOptions.find(
-      (l) =>
-        (l.label || l.name || "").toLowerCase() ===
-        (selectedLanguage || "").toLowerCase()
-    );
+  languageOptions.find((l: any) =>
+    String(l.code ?? l.language_code ?? l.language_iso_code ?? "")
+      .toLowerCase() === (selectedLanguage || "").toLowerCase()
+  ) ||
+  languageOptions.find((l: any) => {
+    const display = String(l.display_name ?? l.label_native ?? l.label ?? "").toLowerCase();
+    return display === (selectedLanguage || "").toLowerCase();
+  });
+
 
   const languageNameToISO: Record<string, string> = {
     afrikaans: "af", albanian: "sq", amharic: "am", arabic: "ar", armenian: "hy",
@@ -1321,15 +1357,18 @@ async function handleVerifyOtp() {
       `&lang=${encodeURIComponent(langCode)}` +
       `&langLabel=${encodeURIComponent(languageLabel)}` +
       `&prefix=${encodeURIComponent(dialCode)}`+
-      (otpVerified ? `&otp=1` : ``)
+      (otpVerified ? `&otp=1` : ``) +
+    `&allowConnectors=${allowConnectors ? "1" : "0"}`
   );
 }
 
 
-  if (!isReady || loadingLanguages || loadingCountries) return null;
+  if (!isReady) return null;
+
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-6 bg-white text-black font-sans max-w-md mx-auto">
+   <div className="min-h-screen w-full max-w-[720px] mx-auto px-4 sm:px-6 py-6 bg-white text-black font-sans">
+
       <div className="mt-20 mb-8 text-center space-y-1 sm:space-y-2 md:space-y-3">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-blue-700 leading-snug uppercase break-words">
           {tOverride("welcome_to")}
@@ -1354,22 +1393,11 @@ async function handleVerifyOtp() {
       />
       <div className="text-sm text-gray-700 mb-3 text-center">
         <span className="text-blue-600 font-medium">India_Tamilnadu_M253540</span> {" "}or{" "}
-        <span className="text-green-600 font-medium">India_Tamil Nadu_INTAAA00004_Mary</span>
+        <span className="text-green-600 font-medium">India_Tamil Nadu_INTAAA000000004_Mary</span>
       </div>
-      <button
-        onClick={() => {
-          console.log("🟦 referral button → API");
-          validateReferralWithAPI();
-        }}
-        disabled={validatingReferral}
-        className={`mb-4 px-6 py-2 rounded text-white ${
-          validatingReferral ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-        }`}
-      >
-        {validatingReferral ? "Validating..." : "Validate Referral Code"}
-      </button>
+    
 
-      {referralMsg && (
+{referralMsg && (
   <p
     className={`mb-4 text-center text-lg font-semibold ${
       referralMsgType === "success" ? "text-green-600" :
@@ -1380,6 +1408,28 @@ async function handleVerifyOtp() {
     {referralMsg}
   </p>
 )}
+
+{/** ⬇️ BLOCK M — Gate status note (optional) */}
+{gateInfo && gateInfo.isAA && (
+  <p className="mb-4 text-center text-sm">
+    {typeof gateInfo.businessPct === "number" ? (
+      gateInfo.unlocked ? (
+        <span className="text-green-600 font-semibold">
+          AB “business” = {gateInfo.businessPct}% — Connectors tab unlocked.
+        </span>
+      ) : (
+        <span className="text-amber-700 font-semibold">
+          AB “business” = {gateInfo.businessPct}% — Connectors tab locked until ≥ 95%.
+        </span>
+      )
+    ) : (
+      <span className="text-gray-600">Checking AB split…</span>
+    )}
+  </p>
+)}
+{/** ⬆️ End BLOCK M */}
+
+
 
       {/* Country */}
       <div className="mb-4 w-full text-center">
@@ -1412,7 +1462,7 @@ async function handleVerifyOtp() {
             className="border border-gray-400 p-3 rounded-lg w-full bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">-- Select --</option>
-            <option value="ALL STATES">All States</option>
+          <option value={ALL_STATES}>{ALL_STATES}</option>
             {(statesByCountry as Record<string, any[]>)[selectedCountry]?.map((state, idx) => {
               const val = typeof state === "string" ? state : (state as any).name || "";
               return (
@@ -1424,6 +1474,19 @@ async function handleVerifyOtp() {
           </select>
         </div>
       </div>
+      
+      <button
+  onClick={() => {
+    console.log("🟦 referral button → API");
+    validateReferralWithAPI();
+  }}
+  disabled={validatingReferral}
+  className={`mb-4 px-6 py-2 rounded text-white ${
+    validatingReferral ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+  }`}
+>
+  {validatingReferral ? "Validating..." : "Validate Referral Code"}
+</button>
 
       {/* Language */}
       <div className="mb-4 w-full text-center">
@@ -1639,40 +1702,51 @@ async function handleVerifyOtp() {
 
 
 
-/* Terms */
+{/* Terms */}
+<div className="w-full flex justify-center mb-6">
+  <label className="w-full max-w-[640px] mx-auto flex items-start sm:items-center justify-center gap-2 text-left">
+    <input
+      type="checkbox"
+      checked={acceptedTerms}
+      onChange={(e) => setAcceptedTerms(e.target.checked)}
+      className="mt-1 sm:mt-0 h-4 w-4 accent-blue-600"
+      aria-label={t("accept_terms")}
+    />
+    <span className="text-sm leading-5 text-gray-700">
+      {t("accept_terms")}{" "}
+      <a href="#" className="text-blue-600 underline">
+        {t("terms_and_conditions")}
+      </a>
+    </span>
+  </label>
+</div>
 
-      {/* Terms */}
-      <div className="mb-6 w-full text-center">
-        <label className="inline-flex items-center">
-          <input
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
-            className="mr-2"
-          />
-          <span className="text-sm text-gray-700">
-            {t("accept_terms")}{" "}
-            <a href="#" className="text-blue-600 underline">
-              {t("terms_and_conditions")}
-            </a>
-          </span>
-        </label>
-      </div>
 
       {/* Join */}
       <button
-        onClick={handleJoin}
-        disabled={
-  !referralValid || !mobileValid || !otpVerified || !acceptedTerms || validatingReferral || validatingMobile
-}
-        className={`px-6 py-3 w-full rounded-2xl text-lg ${
-          !referralValid || !mobileValid || !acceptedTerms || validatingReferral || validatingMobile
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-green-600 hover:bg-green-700 text-white"
-        }`}
-      >
-        {t("join_connecta_community")}
-      </button>
+  onClick={handleJoin}
+  disabled={
+    !referralValid ||
+    !mobileValid ||
+    !otpVerified ||
+    !acceptedTerms ||
+    validatingReferral ||
+    validatingMobile
+  }
+  className={`px-6 py-3 w-full rounded-2xl text-lg ${
+    !referralValid ||
+    !mobileValid ||
+    !otpVerified ||
+    !acceptedTerms ||
+    validatingReferral ||
+    validatingMobile
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-green-600 hover:bg-green-700 text-white"
+  }`}
+>
+  {t("join_connecta_community")}
+</button>
+
     </div>
   );
 }

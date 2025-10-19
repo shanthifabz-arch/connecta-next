@@ -33,7 +33,7 @@ export default function LanguageManager() {
       .order("label", { ascending: true });
 
     if (error) {
-      console.error("âŒ Error fetching languages:", error.message);
+      console.error("Error fetching languages:", error.message);
     } else {
       setLanguages(data as Language[]);
     }
@@ -44,7 +44,7 @@ export default function LanguageManager() {
   const handleAddLanguage = async () => {
     setError("");
     if (!newCode || !newLabel || !newScript) {
-      setError("âŒ All fields are required.");
+      setError("All fields are required.");
       return;
     }
 
@@ -52,7 +52,7 @@ export default function LanguageManager() {
       (lang) => lang.code.toLowerCase() === newCode.toLowerCase()
     );
     if (duplicate) {
-      setError("âŒ Language code already exists.");
+      setError("Language code already exists.");
       return;
     }
 
@@ -66,7 +66,7 @@ export default function LanguageManager() {
     ]);
 
     if (error) {
-      alert("âŒ Failed to add language.");
+      alert(" Failed to add language.");
       console.error(error);
     } else {
       setNewCode("");
@@ -83,7 +83,7 @@ export default function LanguageManager() {
       .eq("id", id);
 
     if (error) {
-      alert("âŒ Failed to update language status.");
+      alert("Failed to update language status.");
       console.error(error);
     } else {
       fetchLanguages();
@@ -99,7 +99,7 @@ export default function LanguageManager() {
     const { error } = await supabase.from("languages").delete().eq("id", id);
 
     if (error) {
-      alert("âŒ Failed to delete language.");
+      alert("Failed to delete language.");
       console.error(error);
     } else {
       fetchLanguages();
@@ -131,7 +131,7 @@ export default function LanguageManager() {
         .select("code");
 
       if (fetchError) {
-        alert("âŒ Failed to fetch existing language codes.");
+        alert(" Failed to fetch existing language codes.");
         console.error(fetchError);
         return;
       }
@@ -144,7 +144,7 @@ export default function LanguageManager() {
       );
 
       if (newEntries.length === 0) {
-        alert("âœ… All languages in this CSV already exist. Nothing to add.");
+        alert("All languages in this CSV already exist. Nothing to add.");
         return;
       }
 
@@ -152,10 +152,13 @@ export default function LanguageManager() {
         newEntries
       );
       if (insertError) {
-        alert("âŒ Failed to insert new languages.");
+        alert(" Failed to insert new languages.");
         console.error(insertError);
       } else {
-        alert(`âœ… ${newEntries.length} added, ${rows.length - newEntries.length} skipped.`);
+        const added = newEntries.length;
+const skipped = rows.length - added;
+window.alert(`${added} added, ${skipped} skipped.`);
+
         fetchLanguages();
       }
     };
@@ -165,7 +168,7 @@ export default function LanguageManager() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold text-blue-700 mb-4">ðŸŒ Language Management</h2>
+      <h2 className="text-2xl font-bold text-blue-700 mb-4">Language Management</h2>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <input
@@ -190,7 +193,7 @@ export default function LanguageManager() {
           onClick={handleAddLanguage}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
-          âž• Add Language
+          Add Language
         </button>
 
         <label className="flex items-center gap-2 cursor-pointer ml-4">

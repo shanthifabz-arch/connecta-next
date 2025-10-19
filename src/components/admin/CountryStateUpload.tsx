@@ -33,7 +33,7 @@ export default function CountryStateUpload() {
         .order("country", { ascending: true });
       if (error) {
         console.error("Error fetching countries:", error);
-        setStatus("âŒ Error fetching countries.");
+        setStatus("❌ Error fetching countries.");
       } else {
         setCountries(data as CountryStateRow[]);
         setStatus("");
@@ -72,65 +72,74 @@ export default function CountryStateUpload() {
       );
 
       if (!isValid) {
-        setStatus("âŒ Invalid JSON structure: states must be arrays of strings.");
+       setStatus("❌ Invalid JSON structure: states must be arrays of strings.");
         return;
       }
 
       setJsonPreview(json);
-      setStatus("âœ… JSON file loaded. Ready to upload.");
+     setStatus("✅ JSON file loaded. Ready to upload.");
     } catch (err) {
       console.error("JSON Parse Error:", err);
-      setStatus("âŒ Invalid JSON format.");
+      setStatus("❌ Invalid JSON format.");
     }
   };
 
-  // **Add this: handleUploadToSupabase function**
-  const handleUploadToSupabase = async () => {
-    if (!Object.keys(jsonPreview).length) return;
+// **Add this: handleUploadToSupabase function**
+const handleUploadToSupabase = async () => {
+  if (!Object.keys(jsonPreview).length) return;
 
-    setIsUploading(true);
-    setStatus("Uploading... Please wait.");
+  setIsUploading(true);
+  setStatus("Uploading... Please wait.");
 
-    // Prepare rows: [{ country: 'India', states: [ ... ] }, ...]
-    const rows = Object.entries(jsonPreview).map(([country, states]) => ({
-      country,
-      states, // pass as jsonb array
-      active: true, // default active true for new entries (adjust if needed)
-    }));
+  // Prepare rows: [{ country: 'India', states: [ ... ] }, ...]
+  const rows = Object.entries(jsonPreview).map(([country, states]) => ({
+    country,
+    states: states as string[], // pass as jsonb array
+    active: true,               // default active true for new entries (adjust if needed)
+  }));
 
-    try {
-      const { error } = await supabase
+  try {
+    // In supabase-js v2, onConflict must be a STRING (comma-separated if multiple)
+    const { data: saved, error } = await supabase
+      .from("country_states")
+      .upsert(rows, { onConflict: "country" }) // unique constraint on country required
+      .select();
+
+    if (error) {
+      console.error("Supabase Insert Error:", error);
+      setStatus("❌ Upload failed. Check console for details.");
+    } else {
+      setStatus(`✅ Successfully uploaded ${rows.length} countries.`);
+      setJsonPreview({});
+      setFileName("");
+
+      // Refresh the countries list to show updated data
+      const { data, error: refreshErr } = await supabase
         .from("country_states")
-        .upsert(rows, { onConflict: ["country"] }); // unique constraint on country required
+        .select("*")
+        .order("country", { ascending: true });
 
-      if (error) {
-        console.error("Supabase Insert Error:", error);
-        setStatus("âŒ Upload failed. Check console for details.");
-      } else {
-        setStatus(`âœ… Successfully uploaded ${rows.length} countries.`);
-        setJsonPreview({});
-        setFileName("");
-
-        // Refresh the countries list to show updated data
-        const { data } = await supabase
-          .from("country_states")
-          .select("*")
-          .order("country", { ascending: true });
-        if (data) setCountries(data as CountryStateRow[]);
+      if (refreshErr) {
+        console.error("Refresh error:", refreshErr);
+      } else if (data) {
+        setCountries(data as CountryStateRow[]);
       }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      setStatus("âŒ Unexpected error occurred during upload.");
     }
-
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    setStatus("❌ Unexpected error occurred during upload.");
+  } finally {
     setIsUploading(false);
-  };
+  }
+};
+
 
   return (
     <div className="bg-white border rounded-xl p-6 shadow-md max-w-3xl mx-auto">
       <h2 className="text-xl font-bold mb-4 text-blue-600">
-        Upload Countryâ€"State JSON
-      </h2>
+  Upload Country–State JSON
+</h2>
+
 
       <input
         type="file"

@@ -11,6 +11,13 @@ interface TranslationData {
   keys?: string[];
 }
 
+type TranslationRow = {
+  translations: Record<string, string> | null;
+  base_translations: Record<string, string> | null;
+  keys: string[] | null;
+};
+
+
 export default function TranslationEditor() {
   const [languages, setLanguages] = useState<string[]>([]);
   const [language, setLanguage] = useState<string>("");
@@ -50,23 +57,27 @@ export default function TranslationEditor() {
       setLoading(true);
       setError(null);
 
-      // Fetch selected language translations + keys + base translations
-      const { data, error } = await supabase
-        .from<TranslationData>("translations")
-        .select("translations, base_translations, keys")
-        .eq("language_code", language)
-        .single();
+    // Fetch selected language translations + keys + base translations
+const { data, error } = await supabase
+  .from("translations")
+  .select("translations, base_translations, keys")
+  .eq("language_code", language)
+  .single();
 
-      if (error) {
-        setError("Error fetching translations: " + error.message);
-        setLoading(false);
-        return;
-      }
+if (error) {
+  setError("Error fetching translations: " + error.message);
+  setLoading(false);
+  return;
+}
 
-      setTranslations(data?.translations || {});
-      setBaseTranslations(data?.base_translations || {});
-      setKeys(data?.keys || Object.keys(data?.translations || {})); // fallback keys from translations
-      setLoading(false);
+// Narrow the shape safely
+const row = (data ?? {}) as TranslationRow;
+
+setTranslations(row.translations ?? {});
+setBaseTranslations(row.base_translations ?? {});
+setKeys(row.keys ?? Object.keys(row.translations ?? {})); // fallback keys from translations
+setLoading(false);
+
     }
     fetchTranslations();
   }, [language]);

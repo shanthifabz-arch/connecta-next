@@ -14,6 +14,8 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
       NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+      # Compatibility for modules on main that have not yet been migrated.
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder
       SUPABASE_URL: https://example.supabase.co
       SUPABASE_SECRET_KEY: sb_secret_ci_placeholder
       # Temporary compatibility name until all server modules use

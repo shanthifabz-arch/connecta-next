@@ -1,4 +1,4 @@
-﻿name: CI
+name: CI
 
 on:
   push:
@@ -8,13 +8,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    # These envs are injected into all steps in this job
+    # CI only compiles the application. Use non-sensitive placeholders so
+    # production Supabase credentials are never copied into GitHub Actions.
     env:
-      NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.https://doqvzqqmhdqtscpmlmhp.supabase.co }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcXZ6cXFtaGRxdHNjcG1sbWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzNjIyNzYsImV4cCI6MjA2NjkzODI3Nn0.RUTk8Va0Knvpqi5ac_FTEEfq0ANT5cYQ19rFIwc0daw
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcXZ6cXFtaGRxdHNjcG1sbWhwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MTM2MjI3NiwiZXhwIjoyMDY2OTM4Mjc2fQ.ksk3iE0DJ9OwYdbb0Ijnev9LmvPV_I9keCNgjNjfh_I }}
-     
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+      SUPABASE_URL: https://example.supabase.co
+      SUPABASE_SECRET_KEY: sb_secret_ci_placeholder
+      # Temporary compatibility name until all server modules use
+      # SUPABASE_SECRET_KEY directly.
+      SUPABASE_SERVICE_ROLE_KEY: sb_secret_ci_placeholder
 
     steps:
       - uses: actions/checkout@v4
